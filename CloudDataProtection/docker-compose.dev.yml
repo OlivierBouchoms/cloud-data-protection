@@ -20,7 +20,11 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: mongodevelopment
+    volumes:
+      - cdp_mongodb:/data/db
 
 volumes:
   cdp_rabbitmq:
+    driver: local
+  cdp_mongodb:
     driver: local

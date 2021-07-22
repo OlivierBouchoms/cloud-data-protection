@@ -71,6 +71,22 @@ Windows:
 `setx CDP_BACKUP_DEMO_FUNCTIONS_KEY {your function key goes here}`
 `setx CDP_DEMO_API_KEY {your function key goes here}`
 
+## MongoDB
+
+The MongoDB-database in embedded in the Docker Compose configuration. The connection string and database only need to be stored as environment variables.
+
+Unix:
+`export CDP_DEMO_MONGO=mongodb://root:mongodevelopment@localhost:27017/?retryWrites=true&w=majority`
+`export CDP_DEMO_MONGO_DB=backupdemodb`
+
+Windows:
+`setx CDP_DEMO_MONGO "mongodb://root:mongodevelopment@localhost:27017/?retryWrites=true&w=majority"`
+`setx CDP_DEMO_MONGO_DB backupdemodb`
+
+## Docker compose
+
+Run `dev.sh` located in the `CloudDataProtection` directory to launch the development dependencies.
+
 ## Logging in
 
 A client account can be created by registering a new account. It is not possible yet to change the password of the default (employee) user.
