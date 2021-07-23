@@ -18,12 +18,13 @@ import {useSnackbar} from "notistack";
 import {startLoading, stopLoading} from "common/progress/helper";
 import snackbarOptions from "common/snackbar/options";
 import {FileDownloadResult} from "services/result/demo/fileDownloadResult";
-import FileUploadResult from "services/result/demo/fileUploadResult";
+import {FileUploadResult} from "services/result/demo/fileUploadResult";
 import {FileInfoResult} from "services/result/demo/fileInfoResult";
-import {Cloud, CloudOutlined, Crop, Description, Info} from "@material-ui/icons";
+import {CloudOutlined, Crop, Description, Info} from "@material-ui/icons";
 import {FileSourceResult, FileDestinationResultEntry} from "services/result/demo/fileSourceResult";
 import FileDestination from "entities/fileDestination";
 import FileUploadInput from "services/input/demo/fileUploadInput";
+import "extensions/array";
 import './demo.css';
 
 const Demo = () => {
@@ -122,10 +123,33 @@ const Demo = () => {
 
         await demoService.upload(selectedFile, fileUploadInput, cancelTokenSource.token)
             .then((result) => setUploadedFile(result))
-            .then(() => enqueueSnackbar('File upload succeeded', snackbarOptions))
+            .then(() => uploadedFile?.success && enqueueSnackbar('File upload succeeded', snackbarOptions))
+            .then(() => !(uploadedFile?.success) && enqueueSnackbar('File upload failed', snackbarOptions))
             .then(() => setSelectedFile(undefined))
             .catch((e) => onError(e))
             .finally(() => stopLoading());
+    }
+
+    const uploadedTo = () => {
+        if (!uploadedFile) {
+            return '';
+        }
+
+        return uploadedFile.uploadedTo
+            .filter(u => u.success)
+            .map(u => u.description)
+            .joinNice(', ', ' and ');
+    }
+
+    const uploadedToError = () => {
+        if (!uploadedFile) {
+            return '';
+        }
+
+        return uploadedFile.uploadedTo
+            .filter(u => !u.success)
+            .map(u => u.description)
+            .joinNice(', ', ' and ');
     }
 
     const onFileSelect = (e: any) => {
@@ -227,10 +251,18 @@ const Demo = () => {
                         }
                     </FormGroup>
 
-                    {uploadedFile &&
+                    {uploadedFile && uploadedFile.success &&
                         <div className='backup-demo__uploaded-file'>
-                            Your file has been uploaded. You can access it later by saving this code. Click it to copy to the clipboard: <code className='backup-demo__uploaded-file__id' onClick={(e) => copyToClipboard(e)}>{uploadedFile.storageId}</code>
+                            Your file has been uploaded to {uploadedTo()}. You can access it later by saving the following code (click to copy): <code className='backup-demo__uploaded-file__id' onClick={(e) => copyToClipboard(e)}>
+                                {uploadedFile.id}
+                            </code>.
+                            {uploadedFile.hasErrors &&
+                                <p>An error has occurred while uploading the file to {uploadedToError()}.</p>
+                            }
                         </div>
+                    }
+                    {uploadedFile && !uploadedFile.success &&
+                        <div className='backup-demo__uploaded-file'>An error has occurred while uploading the file to {uploadedToError()}.</div>
                     }
 
                     <div className='backup-demo__upload__btn-container'>

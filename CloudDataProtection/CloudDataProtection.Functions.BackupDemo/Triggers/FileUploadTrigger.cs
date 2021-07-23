@@ -54,8 +54,13 @@ namespace CloudDataProtection.Functions.BackupDemo.Triggers
 
             FileUploadResult dto = new FileUploadResult
             {
-                // TODO
-                StorageId = result.Data.Id.ToString()
+                Id = result.Data.Id.ToString(),
+                Bytes = result.Data.Bytes,
+                ContentType = result.Data.ContentType,
+                DisplayName = result.Data.DisplayName,
+                UploadedTo = result.Data.UploadedTo
+                    .Select(u => new FileUploadDestinationResultEntry(u))
+                    .ToList()
             };
             
             return new OkObjectResult(dto);

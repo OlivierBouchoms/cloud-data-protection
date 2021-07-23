@@ -2,7 +2,7 @@ import {ServiceBase} from "services/base/serviceBase";
 import {AxiosResponse, CancelToken} from "axios";
 import {http} from "common/http";
 import {FileDownloadResult} from "services/result/demo/fileDownloadResult";
-import FileUploadResult from "services/result/demo/fileUploadResult";
+import {FileUploadResult} from "services/result/demo/fileUploadResult";
 import {FileInfoResult} from "services/result/demo/fileInfoResult";
 import {readFileName} from "common/parser/contentDisposition";
 import fileDownload from "js-file-download";
@@ -10,6 +10,7 @@ import {FileSourceResult} from "services/result/demo/fileSourceResult";
 import FileUploadInput from "./input/demo/fileUploadInput";
 
 class DemoService extends ServiceBase {
+    /* 25 mb */
     public static readonly maxFileSize: number = 25 * 1024 * 1024;
 
     public async upload(file: File, input: FileUploadInput, cancelToken?: CancelToken): Promise<FileUploadResult> {

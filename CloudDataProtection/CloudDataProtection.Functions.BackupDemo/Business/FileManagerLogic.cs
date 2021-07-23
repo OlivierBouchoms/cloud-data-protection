@@ -89,7 +89,10 @@ namespace CloudDataProtection.Functions.BackupDemo.Business
                     file.AddDestination(info);
                 }
 
-                await _repository.Create(file);
+                if (file.IsUploaded)
+                {
+                    await _repository.Create(file);
+                }
 
                 return BusinessResult<File>.Ok(file);
             }      
