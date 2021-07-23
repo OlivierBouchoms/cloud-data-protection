@@ -2,7 +2,12 @@
 using CloudDataProtection.Core.Cryptography.Aes.Options;
 using CloudDataProtection.Core.Environment;
 using CloudDataProtection.Functions.BackupDemo.Business;
+using CloudDataProtection.Functions.BackupDemo.Context;
+using CloudDataProtection.Functions.BackupDemo.Repository;
 using CloudDataProtection.Functions.BackupDemo.Service;
+using CloudDataProtection.Functions.BackupDemo.Service.Amazon;
+using CloudDataProtection.Functions.BackupDemo.Service.Azure;
+using CloudDataProtection.Functions.BackupDemo.Service.Google;
 using Microsoft.Extensions.Options;
 
 namespace CloudDataProtection.Functions.BackupDemo.Factory
@@ -25,9 +30,22 @@ namespace CloudDataProtection.Functions.BackupDemo.Factory
 
             IDataTransformer transformer = new AesStreamTransformer(options);
             ITransformer stringTransformer = new AesTransformer(Options.Create(options));
-            IFileService fileService = new BlobStorageFileService();
 
-            return new FileManagerLogic(fileService, transformer, stringTransformer);
+            MongoDbOptions mongoDbOptions = new MongoDbOptions
+            {
+                ConnectionString = EnvironmentVariableHelper.GetEnvironmentVariable("CDP_DEMO_MONGO"),
+                Database = EnvironmentVariableHelper.GetEnvironmentVariable("CDP_DEMO_MONGO_DB"),
+            };
+
+            IFileContext context = new MongoDbFileContext(mongoDbOptions);
+            
+            IBlobStorageFileService blobStorageFileService = new BlobStorageFileService();
+            IS3FileService s3FileService = new S3FileService();
+            IGoogleCloudStorageFileService googleCloudStorageFileService = new GoogleCloudStorageFileService();
+            IFileRepository repository = new FileRepository(context);
+
+            return new FileManagerLogic
+                (blobStorageFileService, s3FileService, googleCloudStorageFileService, transformer, stringTransformer, repository);
         }
     }
 }

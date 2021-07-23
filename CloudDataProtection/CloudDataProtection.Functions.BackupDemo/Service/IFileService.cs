@@ -7,7 +7,7 @@ namespace CloudDataProtection.Functions.BackupDemo.Service
 {
     public interface IFileService
     {
-        Task<UploadResult> Upload(Stream stream, string uploadFileName, IDictionary<string, string> tags);
+        Task<UploadFileResult> Upload(Stream stream, string uploadFileName, IDictionary<string, string> tags);
 
         Task<InfoResult> GetInfo(string id);
 

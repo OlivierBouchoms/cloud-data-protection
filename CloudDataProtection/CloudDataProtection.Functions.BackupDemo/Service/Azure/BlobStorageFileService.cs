@@ -8,15 +8,15 @@ using CloudDataProtection.Core.Environment;
 using CloudDataProtection.Functions.BackupDemo.Extensions;
 using CloudDataProtection.Functions.BackupDemo.Service.Result;
 
-namespace CloudDataProtection.Functions.BackupDemo.Service
+namespace CloudDataProtection.Functions.BackupDemo.Service.Azure
 {
-    public class BlobStorageFileService : IFileService
+    public class BlobStorageFileService : IBlobStorageFileService
     {
-        private static string ConnectionString => EnvironmentVariableHelper.GetEnvironmentVariable("CDP_DEMO_BLOB_CONNECTION");
+        private static string ConnectionString => EnvironmentVariableHelper.GetEnvironmentVariable("CDP_DEMO_BLOB_STORAGE");
 
         private static readonly string ContainerName = "cdp-demo-blobstorage";
 
-        public async Task<UploadResult> Upload(Stream stream, string uploadFileName, IDictionary<string, string> tags)
+        public async Task<UploadFileResult> Upload(Stream stream, string uploadFileName, IDictionary<string, string> tags)
         {
             BlobClient blobClient = await GetBlobClient(uploadFileName);
 
@@ -24,10 +24,10 @@ namespace CloudDataProtection.Functions.BackupDemo.Service
 
             if (!response.IsSuccessStatusCode())
             {
-                return new UploadResult(false);
+                return new UploadFileResult(false);
             }
 
-            return new UploadResult(true) {Id = uploadFileName};
+            return new UploadFileResult(true) {Id = uploadFileName};
         }
 
         public async Task<InfoResult> GetInfo(string id)
