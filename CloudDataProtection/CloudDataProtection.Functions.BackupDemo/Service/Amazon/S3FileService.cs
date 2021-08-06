@@ -1,25 +1,93 @@
-using System.Collections.Generic;
+using System;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
+using Amazon;
+using Amazon.Runtime;
+using Amazon.S3;
+using Amazon.S3.Model;
+using CloudDataProtection.Core.Environment;
+using CloudDataProtection.Functions.BackupDemo.Extensions;
 using CloudDataProtection.Functions.BackupDemo.Service.Result;
 
 namespace CloudDataProtection.Functions.BackupDemo.Service.Amazon
 {
     public class S3FileService : IS3FileService
     {
-        public Task<UploadFileResult> Upload(Stream stream, string uploadFileName, IDictionary<string, string> tags)
+        private static string AccessKeyId => EnvironmentVariableHelper.GetEnvironmentVariable("CDP_DEMO_AWS_KEY");
+        private static string AccessSecret => EnvironmentVariableHelper.GetEnvironmentVariable("CDP_DEMO_AWS_SECRET");
+
+        private static readonly string BucketName = "cdp-demo-s3";
+
+        public async Task<UploadFileResult> Upload(Stream stream, string uploadFileName)
         {
-            throw new System.NotImplementedException();
+            try
+            {
+                AmazonS3Client client = await GetS3Client();
+
+                PutObjectRequest request = new PutObjectRequest
+                {
+                    BucketName = BucketName,
+                    Key = uploadFileName,
+                    StorageClass = S3StorageClass.Standard,
+                    InputStream = stream
+                };
+
+                PutObjectResponse response = await client.PutObjectAsync(request);
+
+                if (!response.IsSuccessStatusCode())
+                {
+                    return new UploadFileResult(false);
+                }
+
+                return new UploadFileResult(true) { Id = uploadFileName };
+            }
+            catch (Exception e)
+            {
+                return new UploadFileResult(false);
+            }
         }
 
-        public Task<InfoResult> GetInfo(string id)
+        public async Task<Stream> GetDownloadStream(string id)
         {
-            throw new System.NotImplementedException();
+            try
+            {
+                AmazonS3Client client = await GetS3Client();
+
+                GetObjectRequest request = new GetObjectRequest
+                {
+                    BucketName = BucketName,
+                    Key = id
+                };
+
+                GetObjectResponse response = await client.GetObjectAsync(request);
+
+                return response.ResponseStream;
+            }
+            catch (Exception e)
+            {
+                return Stream.Null;
+            }
         }
 
-        public Task<Stream> Download(string id)
+        private async Task<AmazonS3Client> GetS3Client()
         {
-            throw new System.NotImplementedException();
+            AmazonS3Client client = new AmazonS3Client(AccessKeyId, AccessSecret, RegionEndpoint.EUCentral1);
+            
+            ListBucketsResponse response = await client.ListBucketsAsync();
+
+            if (!response.Buckets.Any(b => b.BucketName.Equals(BucketName)))
+            {
+                PutBucketRequest request = new PutBucketRequest
+                {
+                    BucketName = BucketName,
+                    UseClientRegion = true,
+                };
+
+                await client.PutBucketAsync(request);
+            }
+
+            return client;
         }
     }
 }

@@ -8,7 +8,6 @@ using CloudDataProtection.Functions.BackupDemo.Service;
 using CloudDataProtection.Functions.BackupDemo.Service.Amazon;
 using CloudDataProtection.Functions.BackupDemo.Service.Azure;
 using CloudDataProtection.Functions.BackupDemo.Service.Google;
-using Microsoft.Extensions.Options;
 
 namespace CloudDataProtection.Functions.BackupDemo.Factory
 {
@@ -29,7 +28,6 @@ namespace CloudDataProtection.Functions.BackupDemo.Factory
             };
 
             IDataTransformer transformer = new AesStreamTransformer(options);
-            ITransformer stringTransformer = new AesTransformer(Options.Create(options));
 
             MongoDbOptions mongoDbOptions = new MongoDbOptions
             {
@@ -45,7 +43,7 @@ namespace CloudDataProtection.Functions.BackupDemo.Factory
             IFileRepository repository = new FileRepository(context);
 
             return new FileManagerLogic
-                (blobStorageFileService, s3FileService, googleCloudStorageFileService, transformer, stringTransformer, repository);
+                (blobStorageFileService, s3FileService, googleCloudStorageFileService, transformer, repository);
         }
     }
 }

@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using CloudDataProtection.Core.Cryptography.Aes;
 using CloudDataProtection.Core.Result;
 using CloudDataProtection.Functions.BackupDemo.Entities;
+using CloudDataProtection.Functions.BackupDemo.Extensions;
 using CloudDataProtection.Functions.BackupDemo.Repository;
 using CloudDataProtection.Functions.BackupDemo.Service;
 using CloudDataProtection.Functions.BackupDemo.Service.Amazon;
@@ -20,7 +22,6 @@ namespace CloudDataProtection.Functions.BackupDemo.Business
     public class FileManagerLogic
     {
         private readonly IDataTransformer _transformer;
-        private readonly ITransformer _stringTransformer;
         
         private readonly IFileRepository _repository;
 
@@ -30,21 +31,16 @@ namespace CloudDataProtection.Functions.BackupDemo.Business
 
         private const int FilenameHashWorkFactor = 4;
 
-        private static readonly string DisplayNameKey = "display_name";
-        private static readonly string ContentTypeKey = "content_type";
-
         public FileManagerLogic(IBlobStorageFileService blobStorageFileService, 
             IS3FileService s3FileService,
             IGoogleCloudStorageFileService googleCloudStorageFileService, 
             IDataTransformer transformer,
-            ITransformer stringTransformer, 
             IFileRepository repository)
         {
             _blobStorageFileService = blobStorageFileService;
             _s3FileService = s3FileService;
             _googleCloudStorageFileService = googleCloudStorageFileService;
             _transformer = transformer;
-            _stringTransformer = stringTransformer;
             _repository = repository;
         }
 
@@ -52,11 +48,6 @@ namespace CloudDataProtection.Functions.BackupDemo.Business
         {
             string fileName = GenerateFileName(input);
             
-            IDictionary<string, string> tags = new Dictionary<string, string>();
-
-            tags.Add(DisplayNameKey, _stringTransformer.Encrypt(input.FileName));
-            tags.Add(ContentTypeKey, _stringTransformer.Encrypt(input.ContentType));
-
             using (Stream stream = _transformer.Encrypt(input.OpenReadStream()))
             {
                 File file = new File
@@ -74,7 +65,11 @@ namespace CloudDataProtection.Functions.BackupDemo.Business
 
                     try
                     {
-                        UploadFileResult fileResult = await service.Upload(stream, fileName, tags);
+                        MemoryStream copy = new MemoryStream();
+
+                        await stream.CopyToAndSeekAsync(copy);
+
+                        UploadFileResult fileResult = await service.Upload(copy, fileName);
 
                         info.UploadCompletedAt = DateTime.Now;
                         info.UploadSuccess = fileResult.Success;
@@ -134,7 +129,7 @@ namespace CloudDataProtection.Functions.BackupDemo.Business
 
                 try
                 {
-                    Stream response = await ResolveFileService(info.Destination).Download(info.FileId);
+                    Stream response = await ResolveFileService(info.Destination).GetDownloadStream(info.FileId);
                     
                     data = _transformer.Decrypt(response);
                 }
@@ -169,15 +164,7 @@ namespace CloudDataProtection.Functions.BackupDemo.Business
 
         private string GenerateFileName(IFormFile input)
         {
-            string blobName = Guid.NewGuid() + "_" + input.FileName;
-
-            string hash = BCrypt.Net.BCrypt.HashPassword(blobName, FilenameHashWorkFactor);
-
-            char[] invalidChars = Path.GetInvalidFileNameChars().Append('.').ToArray();
-
-            string[] sanitizedHash = hash.Split(invalidChars, StringSplitOptions.RemoveEmptyEntries);
-
-            return string.Join("_", sanitizedHash);
+            return Path.GetRandomFileName().Split('.')[0];
         }
 
         private IFileService ResolveFileService(FileDestination destination)

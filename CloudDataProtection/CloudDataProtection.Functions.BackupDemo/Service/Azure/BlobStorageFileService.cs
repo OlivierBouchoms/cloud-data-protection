@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+using System;
 using System.IO;
 using System.Threading.Tasks;
 using Azure;
@@ -16,54 +16,41 @@ namespace CloudDataProtection.Functions.BackupDemo.Service.Azure
 
         private static readonly string ContainerName = "cdp-demo-blobstorage";
 
-        public async Task<UploadFileResult> Upload(Stream stream, string uploadFileName, IDictionary<string, string> tags)
+        public async Task<UploadFileResult> Upload(Stream stream, string uploadFileName)
         {
-            BlobClient blobClient = await GetBlobClient(uploadFileName);
+            try
+            {
+                BlobClient blobClient = await GetBlobClient(uploadFileName);
 
-            Response<BlobContentInfo> response = await blobClient.UploadAsync(stream, new BlobUploadOptions { Tags = tags });
+                Response<BlobContentInfo> response = await blobClient.UploadAsync(stream);
 
-            if (!response.IsSuccessStatusCode())
+                if (!response.IsSuccessStatusCode())
+                {
+                    return new UploadFileResult(false);
+                }
+
+                return new UploadFileResult(true) {Id = uploadFileName};
+            }
+            catch (Exception e)
             {
                 return new UploadFileResult(false);
             }
-
-            return new UploadFileResult(true) {Id = uploadFileName};
         }
 
-        public async Task<InfoResult> GetInfo(string id)
+        public async Task<Stream> GetDownloadStream(string id)
         {
-            BlobClient blobClient = await GetBlobClient(id);
-
-            if (!await blobClient.ExistsAsync())
+            try
             {
-                return new InfoResult(false) {IsNotFoundError = true};
+                BlobClient blobClient = await GetBlobClient(id);
+
+                BlobDownloadInfo response = await blobClient.DownloadAsync();
+                
+                return response.Content;
             }
-
-            Task<Response<BlobProperties>> properties = blobClient.GetPropertiesAsync();
-
-            Task<Response<GetBlobTagResult>> tags = blobClient.GetTagsAsync();
-
-            await Task.WhenAll(properties, tags);
-
-            if (!properties.Result.IsSuccessStatusCode() || !tags.Result.IsSuccessStatusCode())
+            catch (Exception e)
             {
-                return new InfoResult(false);
+                return Stream.Null;
             }
-
-            return new InfoResult(true)
-            {
-                Bytes = properties.Result.Value.ContentLength,
-                Tags = tags.Result.Value.Tags
-            };
-        }
-
-        public async Task<Stream> Download(string id)
-        {
-            BlobClient blobClient = await GetBlobClient(id);
-
-            BlobDownloadInfo response = await blobClient.DownloadAsync();
-
-            return response.Content;
         }
 
         private async Task<BlobClient> GetBlobClient(string id)

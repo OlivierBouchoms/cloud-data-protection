@@ -123,11 +123,12 @@ const Demo = () => {
 
         await demoService.upload(selectedFile, fileUploadInput, cancelTokenSource.token)
             .then((result) => setUploadedFile(result))
-            .then(() => uploadedFile?.success && enqueueSnackbar('File upload succeeded', snackbarOptions))
-            .then(() => !(uploadedFile?.success) && enqueueSnackbar('File upload failed', snackbarOptions))
             .then(() => setSelectedFile(undefined))
             .catch((e) => onError(e))
-            .finally(() => stopLoading());
+            .finally(() => stopLoading())
+            .finally(() => uploadedFile && uploadedFile.success ?
+                enqueueSnackbar('File upload succeeded', snackbarOptions) :
+                enqueueSnackbar('File upload failed', snackbarOptions));
     }
 
     const uploadedTo = () => {
@@ -138,6 +139,7 @@ const Demo = () => {
         return uploadedFile.uploadedTo
             .filter(u => u.success)
             .map(u => u.description)
+            .sort()
             .joinNice(', ', ' and ');
     }
 
@@ -311,7 +313,7 @@ const Demo = () => {
                                     <CloudOutlined />
                                 </ListItemIcon>
                                 <ListItemText>
-                                    Uploaded to: {fileInfo.uploadedTo.map(u => u.description).join(', ')}
+                                    Uploaded to: {fileInfo.uploadedTo.map(u => u.description).sort().join(', ')}
                                 </ListItemText>
                             </ListItem>
                         </List>

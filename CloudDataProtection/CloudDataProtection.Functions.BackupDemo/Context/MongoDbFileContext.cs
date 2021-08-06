@@ -26,35 +26,15 @@ namespace CloudDataProtection.Functions.BackupDemo.Context
         }
 
         private IMongoDatabase _database;
-        private IMongoDatabase Database
-        {
-            get
-            {
-                if (_database == null)
-                {
-                    _database = Client.GetDatabase(_options.Database);
-                }
-
-                return _database;
-            }
-        }
+        private IMongoDatabase Database => _database ??= Client.GetDatabase(_options.Database);
 
         private IMongoCollection<File> _collection;
-        private IMongoCollection<File> Collection
-        {
-            get
-            {
-                if (_collection == null)
-                {
-                    _collection = Database.GetCollection<File>("File", new MongoCollectionSettings
-                    {
-                        AssignIdOnInsert = false
-                    });
-                }
+        private IMongoCollection<File> Collection => _collection ??= Database.GetCollection<File>("File", Settings);
 
-                return _collection;
-            }
-        }
+        private MongoCollectionSettings Settings => new MongoCollectionSettings
+        {
+            AssignIdOnInsert = false
+        };
 
         public MongoDbFileContext(MongoDbOptions options)
         {
