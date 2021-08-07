@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using System.Threading.Tasks;
-using Amazon.Runtime;
 using CloudDataProtection.Core.Environment;
 using CloudDataProtection.Functions.BackupDemo.Service.Result;
 using Google;

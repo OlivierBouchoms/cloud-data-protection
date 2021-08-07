@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using CloudDataProtection.Functions.BackupDemo.Entities;
 
 namespace CloudDataProtection.Functions.BackupDemo.Triggers.Dto

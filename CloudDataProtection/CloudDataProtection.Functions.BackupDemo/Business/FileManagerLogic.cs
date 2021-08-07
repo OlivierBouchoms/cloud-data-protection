@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using CloudDataProtection.Core.Cryptography.Aes;
 using CloudDataProtection.Core.Result;
