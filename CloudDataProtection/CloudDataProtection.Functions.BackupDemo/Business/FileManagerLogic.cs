@@ -105,14 +105,14 @@ namespace CloudDataProtection.Functions.BackupDemo.Business
 
         public async Task<BusinessResult<FileDownloadResult>> Download(Guid id)
         {
-            BusinessResult<File> file = await Get(id);
+            BusinessResult<File> result = await Get(id);
             
-            if (!file.Success)
+            if (!result.Success)
             {
                 return BusinessResult<FileDownloadResult>.Error("An unknown error occured while retrieving info of the file");
             }
             
-            return await Download(file.Data);
+            return await Download(result.Data);
         }
 
         private async Task<BusinessResult<FileDownloadResult>> Download(File file)

@@ -25,15 +25,12 @@ namespace CloudDataProtection.Functions.BackupDemo.Service.Google
                 StorageClient client = await GetClient();
 
                 Object result = await client.UploadObjectAsync(BucketName, uploadFileName, null, stream);
-                
-                return new UploadFileResult(true)
-                {
-                    Id = result.Name
-                };
+
+                return UploadFileResult.Ok(result.Name);
             }
             catch (Exception e)
             {
-                return new UploadFileResult(false);
+                return UploadFileResult.Error();
             }
         }
 

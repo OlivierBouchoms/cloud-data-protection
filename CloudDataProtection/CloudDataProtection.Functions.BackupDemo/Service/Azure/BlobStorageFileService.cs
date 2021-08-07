@@ -26,14 +26,14 @@ namespace CloudDataProtection.Functions.BackupDemo.Service.Azure
 
                 if (!response.IsSuccessStatusCode())
                 {
-                    return new UploadFileResult(false);
+                    return UploadFileResult.Error();
                 }
 
-                return new UploadFileResult(true) {Id = uploadFileName};
+                return UploadFileResult.Ok(uploadFileName);
             }
             catch (Exception e)
             {
-                return new UploadFileResult(false);
+                return UploadFileResult.Error();
             }
         }
 
