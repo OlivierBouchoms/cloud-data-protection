@@ -125,10 +125,7 @@ const Demo = () => {
             .then((result) => setUploadedFile(result))
             .then(() => setSelectedFile(undefined))
             .catch((e) => onError(e))
-            .finally(() => stopLoading())
-            .finally(() => uploadedFile && uploadedFile.success ?
-                enqueueSnackbar('File upload succeeded', snackbarOptions) :
-                enqueueSnackbar('File upload failed', snackbarOptions));
+            .finally(() => stopLoading());
     }
 
     const uploadedTo = () => {
