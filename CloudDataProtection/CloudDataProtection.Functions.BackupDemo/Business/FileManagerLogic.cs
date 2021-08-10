@@ -9,8 +9,6 @@ using CloudDataProtection.Functions.BackupDemo.Entities;
 using CloudDataProtection.Functions.BackupDemo.Extensions;
 using CloudDataProtection.Functions.BackupDemo.Repository;
 using CloudDataProtection.Functions.BackupDemo.Service;
-using CloudDataProtection.Functions.BackupDemo.Service.Amazon;
-using CloudDataProtection.Functions.BackupDemo.Service.Google;
 using CloudDataProtection.Functions.BackupDemo.Service.Result;
 using CloudDataProtection.Functions.BackupDemo.Triggers.Dto;
 using Microsoft.AspNetCore.Http;
