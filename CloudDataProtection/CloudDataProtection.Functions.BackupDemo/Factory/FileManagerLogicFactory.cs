@@ -45,9 +45,9 @@ namespace CloudDataProtection.Functions.BackupDemo.Factory
 
             ICollection<IFileService> fileServices = new List<IFileService>();
             
-            fileServices.AddIf(blobStorageFileService, b => b.IsEnabled);
-            fileServices.AddIf(s3FileService, b => b.IsEnabled);
-            fileServices.AddIf(googleCloudStorageFileService, b => b.IsEnabled);
+            fileServices.AddIf(blobStorageFileService, fs => fs.IsEnabled);
+            fileServices.AddIf(s3FileService, fs => fs.IsEnabled);
+            fileServices.AddIf(googleCloudStorageFileService, fs => fs.IsEnabled);
             
             IFileRepository repository = new FileRepository(context);
 
