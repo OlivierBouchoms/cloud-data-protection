@@ -39,15 +39,11 @@ namespace CloudDataProtection.Functions.BackupDemo.Factory
 
             IFileContext context = new MongoDbFileContext(mongoDbOptions);
             
-            IBlobStorageFileService blobStorageFileService = new BlobStorageFileService();
-            IS3FileService s3FileService = new S3FileService();
-            IGoogleCloudStorageFileService googleCloudStorageFileService = new GoogleCloudStorageFileService();
-
             ICollection<IFileService> fileServices = new List<IFileService>();
             
-            fileServices.AddIf(blobStorageFileService, fs => fs.IsEnabled);
-            fileServices.AddIf(s3FileService, fs => fs.IsEnabled);
-            fileServices.AddIf(googleCloudStorageFileService, fs => fs.IsEnabled);
+            fileServices.AddIf(() => new BlobStorageFileService(), BlobStorageFileService.IsEnabled);
+            fileServices.AddIf(() => new S3FileService(), S3FileService.IsEnabled);
+            fileServices.AddIf(() => new GoogleCloudStorageFileService(), GoogleCloudStorageFileService.IsEnabled);
             
             IFileRepository repository = new FileRepository(context);
 

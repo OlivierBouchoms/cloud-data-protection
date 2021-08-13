@@ -11,8 +11,6 @@ namespace CloudDataProtection.Functions.BackupDemo.Service
 
         Task<Stream> GetDownloadStream(string id);
         
-        bool IsEnabled { get; }
-        
         FileDestination Destination { get; }
     }
 }

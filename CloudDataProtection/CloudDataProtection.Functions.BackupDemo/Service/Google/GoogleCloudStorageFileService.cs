@@ -19,7 +19,7 @@ namespace CloudDataProtection.Functions.BackupDemo.Service.Google
 
         private static readonly string BucketName = "cdp-demo-storage";
                 
-        public bool IsEnabled
+        public static bool IsEnabled
         {
             get
             {

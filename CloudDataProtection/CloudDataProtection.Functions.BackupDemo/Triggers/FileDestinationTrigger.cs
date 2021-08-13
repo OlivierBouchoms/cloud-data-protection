@@ -28,7 +28,7 @@ namespace CloudDataProtection.Functions.BackupDemo.Triggers
             
             FileManagerLogic logic = FileManagerLogicFactory.Instance.GetLogic();
 
-            IEnumerable<FileDestinationResultEntry> sources = logic.EnabledFileServices
+            IEnumerable<FileDestinationResultEntry> sources = logic.FileServices
                 .Select(fs => fs.Destination)
                 .Select(d => new FileDestinationResultEntry((int) d, d.GetDescription()))
                 .OrderBy(d => d.Description);

@@ -17,7 +17,7 @@ namespace CloudDataProtection.Functions.BackupDemo.Service.Azure
 
         private static readonly string ContainerName = "cdp-demo-blobstorage";
         
-        public bool IsEnabled
+        public static bool IsEnabled
         {
             get
             {

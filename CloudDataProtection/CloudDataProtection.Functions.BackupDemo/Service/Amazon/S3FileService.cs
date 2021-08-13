@@ -19,7 +19,7 @@ namespace CloudDataProtection.Functions.BackupDemo.Service.Amazon
 
         private static readonly string BucketName = "cdp-demo-s3";
 
-        public bool IsEnabled
+        public static bool IsEnabled
         {
             get
             {

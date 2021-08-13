@@ -22,7 +22,7 @@ namespace CloudDataProtection.Functions.BackupDemo.Business
         private readonly IFileRepository _repository;
         private readonly IEnumerable<IFileService> _fileServices;
 
-        public IEnumerable<IFileService> EnabledFileServices => _fileServices.Where(fs => fs.IsEnabled).ToList();
+        public IEnumerable<IFileService> FileServices => (IEnumerable<IFileService>) new [] {_fileServices};
 
         public FileManagerLogic(IEnumerable<IFileService> fileServices, 
             IDataTransformer transformer,
@@ -50,7 +50,7 @@ namespace CloudDataProtection.Functions.BackupDemo.Business
                 {
                     IFileService fileService = ResolveFileService(destination);
 
-                    if (fileService == null || !fileService.IsEnabled)
+                    if (fileService == null)
                     {
                         continue;
                     }
@@ -125,7 +125,7 @@ namespace CloudDataProtection.Functions.BackupDemo.Business
                 {
                     IFileService fileService = ResolveFileService(info.Destination);
 
-                    if (fileService == null || !fileService.IsEnabled)
+                    if (fileService == null)
                     {
                         continue;
                     }
