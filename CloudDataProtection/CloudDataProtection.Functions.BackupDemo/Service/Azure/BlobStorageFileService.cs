@@ -31,7 +31,6 @@ namespace CloudDataProtection.Functions.BackupDemo.Service.Azure
 
         public FileDestination Destination => FileDestination.AzureBlobStorage;
 
-
         public async Task<UploadFileResult> Upload(Stream stream, string uploadFileName)
         {
             try
