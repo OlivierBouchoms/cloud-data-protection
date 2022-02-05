@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Security.Cryptography;
+using CloudDataProtection.Core.Cryptography.Aes.Constants;
 
 namespace CloudDataProtection.CI.KeyGenerator
 {
@@ -11,8 +12,8 @@ namespace CloudDataProtection.CI.KeyGenerator
             
             Aes aes = new AesManaged
             {
-                KeySize = 256,
-                BlockSize = 128
+                KeySize = AesConstants.KeySize,
+                BlockSize = AesConstants.BlockSize
             };
             
             Console.WriteLine($"Key size: {aes.KeySize}");
