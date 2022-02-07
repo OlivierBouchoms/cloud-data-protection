@@ -37,7 +37,7 @@ namespace CloudDataProtection.Services.MailService.Sender
             }
         }
 
-        private AlternateView CreateHtmlAlternateView(string body)
+        private static AlternateView CreateHtmlAlternateView(string body)
         {
             return AlternateView.CreateAlternateViewFromString(body, Encoding.UTF8, MimeType.Html);
         }

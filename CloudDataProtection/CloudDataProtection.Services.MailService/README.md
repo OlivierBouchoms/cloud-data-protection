@@ -48,7 +48,7 @@ The SMTP section must be configured if mails are sent using SMTP. See [SmtpOptio
 
 #### Sendgrid
 
-The Sendgrid sections must be configured if mails are sent using Sendgrid.
+The Sendgrid section must be configured if mails are sent using Sendgrid.
 
 ```json
   "SendGrid": {
