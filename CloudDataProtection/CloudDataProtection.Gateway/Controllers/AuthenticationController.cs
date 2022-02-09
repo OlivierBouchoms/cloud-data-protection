@@ -44,10 +44,11 @@ namespace CloudDataProtection.Controllers
 
             AuthenticateResult result = new AuthenticateResult
             {
-                Client = new ClientResult
+                User = new LoginUserResult
                 {
                     Email = user.Email,
-                    Id = user.Id
+                    Id = user.Id,
+                    Role = user.Role
                 },
                 Token = _jwtHelper.GenerateToken(user)
             };

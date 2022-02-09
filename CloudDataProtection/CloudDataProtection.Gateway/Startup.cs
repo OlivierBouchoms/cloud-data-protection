@@ -1,6 +1,8 @@
+using System.Security.Claims;
 using System.Threading.Tasks;
 using CloudDataProtection.Business;
 using CloudDataProtection.Business.Options;
+using CloudDataProtection.Core.Controllers.Data;
 using CloudDataProtection.Core.Cryptography.Generator;
 using CloudDataProtection.Core.DependencyInjection.Extensions;
 using CloudDataProtection.Core.Jwt;
@@ -84,6 +86,7 @@ namespace CloudDataProtection
             services.Configure<RabbitMqConfiguration>(options => Configuration.GetSection("RabbitMq").Bind(options));
             services.Configure<JwtSecretOptions>(options => Configuration.GetSection("Jwt").Bind(options));
             services.Configure<ChangeEmailOptions>(options => Configuration.GetSection("ChangeEmail").Bind(options));
+            services.Configure<ResetPasswordOptions>(options => Configuration.GetSection("ResetPassword").Bind(options));
             services.Configure<AdminSeederOptions>(options => Configuration.GetSection("Admin").Bind(options));
 
             services.AddHostedService<GetUserEmailRpcServer>();
@@ -122,37 +125,18 @@ namespace CloudDataProtection
             services.AddEncryptedDbContext<IAuthenticationDbContext, AuthenticationDbContext>
                 (Configuration, o => o.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
 
-            JwtSecretOptions options = new JwtSecretOptions();
-            
-            Configuration.GetSection("Jwt").Bind(options);
-            
-            services.AddAuthentication(x =>
-                {
-                    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                })
-                .AddJwtBearer(x =>
-                {
-                    x.Events = new JwtBearerEvents
-                    {
-                        OnTokenValidated = OnTokenValidated
-                    };
-                    x.RequireHttpsMetadata = false;
-                    x.SaveToken = true;
-                    x.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(options.Key),
-                        ValidateIssuer = false,
-                        ValidateAudience = false
-                    };
-                });
-            
+            JwtBearerEvents events = new JwtBearerEvents
+            {
+                OnTokenValidated = OnTokenValidated
+            };
+
+            services.ConfigureAuthentication(Configuration, events);
+            services.ConfigureAuthorization();
+
             services.AddScoped<IAuthenticationRepository, AuthenticationRepository>();
             services.AddScoped<AuthenticationBusinessLogic>();
             
             services.AddScoped<IJwtHelper, JwtHelper>();
-            services.AddScoped<IJwtDecoder, JwtDecoder>();
             services.AddScoped<IPasswordHasher, BCryptPasswordHasher>();
             services.AddScoped<IEmailHasher, BCryptEmailHasher>();
 

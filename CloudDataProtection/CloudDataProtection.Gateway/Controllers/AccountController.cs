@@ -100,9 +100,26 @@ namespace CloudDataProtection.Controllers
 
             return Ok();
         }
+        
+        [HttpPatch]
+        [Route("ResetPassword")]
+        [AllowAnonymous]
+        public async Task<ActionResult> ResetPassword(ResetPasswordInput input)
+        {
+            BusinessResult updatePasswordResult = await _authenticationBusinessLogic.UpdatePassword(input.Password, input.Token);
+            
+            if (!updatePasswordResult.Success)
+            {
+                return Conflict(ConflictResponse.Create(updatePasswordResult.Message));
+            }
+
+            return Ok();
+        }
+
 
         [HttpDelete]
         [Route("")]
+        [Authorize(Policy = "ClientOnly")]
         public async Task<ActionResult> Delete()
         {
             BusinessResult<User> getUserResult = await _userBusinessLogic.Get(UserId);

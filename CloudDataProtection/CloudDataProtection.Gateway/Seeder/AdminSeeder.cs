@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using CloudDataProtection.Business;
+using CloudDataProtection.Business.Options;
 using CloudDataProtection.Core.Messaging;
 using CloudDataProtection.Core.Result;
 using CloudDataProtection.Dto.Result;
@@ -15,12 +16,14 @@ namespace CloudDataProtection.Seeder
         private readonly AuthenticationBusinessLogic _logic;
         private readonly IMessagePublisher<AdminSeededModel> _messagePublisher;
         private readonly AdminSeederOptions _options;
+        private readonly ResetPasswordOptions _resetPasswordOptions;
 
-        public AdminSeeder(AuthenticationBusinessLogic logic, IMessagePublisher<AdminSeededModel> publisher, IOptions<AdminSeederOptions> options)
+        public AdminSeeder(AuthenticationBusinessLogic logic, IMessagePublisher<AdminSeededModel> publisher, IOptions<AdminSeederOptions> options, IOptions<ResetPasswordOptions> resetPasswordOptions)
         {
             _logic = logic;
             _messagePublisher = publisher;
             _options = options.Value;
+            _resetPasswordOptions = resetPasswordOptions.Value;
         }
 
         public async Task Seed()
@@ -43,20 +46,23 @@ namespace CloudDataProtection.Seeder
                 Role = UserRole.Admin
             };
 
-            BusinessResult<User> businessResult = await _logic.Create(adminUser);
+            BusinessResult<User> createResult = await _logic.Create(adminUser);
+            BusinessResult<ResetPasswordRequest> requestResetResult = await _logic.RequestResetPassword(adminUser);
 
-            if (businessResult.Success)
+            if (!createResult.Success || !requestResetResult.Success)
             {
-                AdminSeededModel seededModel = new AdminSeededModel
-                {
-                    Email = adminUser.Email,
-                    Id = adminUser.Id,
-                    Url = "https://example.com",
-                    Expiration = DateTime.Today.AddMonths(1)
-                };
-
-                await _messagePublisher.Send(seededModel);
+                return;
             }
+
+            AdminSeededModel seededModel = new AdminSeededModel
+            {
+                Email = adminUser.Email,
+                Id = adminUser.Id,
+                Url = _resetPasswordOptions.FormatUrl(requestResetResult.Data.Token),
+                Expiration = requestResetResult.Data.ExpiresAt
+            };
+
+            await _messagePublisher.Send(seededModel);
         }
     }
 }

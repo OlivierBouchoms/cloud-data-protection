@@ -14,6 +14,12 @@ namespace CloudDataProtection.Data
         Task Create(User user);
         Task Delete(User user);
 
+        Task Create(ResetPasswordRequest request);
+        Task<ResetPasswordRequest> GetResetPasswordRequest(string token);
+        Task<IEnumerable<ResetPasswordRequest>> GetResetPasswordRequests(long userId);
+        Task Update(ResetPasswordRequest request);
+        Task Update(IEnumerable<ResetPasswordRequest> requests);
+
         Task Create(ChangeEmailRequest request);
         Task Update(ChangeEmailRequest request);
         Task Update(IEnumerable<ChangeEmailRequest> requests);

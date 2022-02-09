@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using CloudDataProtection.Business;
+using CloudDataProtection.Business.Options;
 using CloudDataProtection.Core.DependencyInjection.Extensions;
 using CloudDataProtection.Core.Messaging;
 using CloudDataProtection.Core.Papertrail.Extensions;
@@ -49,8 +50,9 @@ namespace CloudDataProtection
                 AuthenticationBusinessLogic authenticationBusinessLogic = scope.ServiceProvider.GetService<AuthenticationBusinessLogic>();
                 IMessagePublisher<AdminSeededModel> publisher = scope.ServiceProvider.GetService<IMessagePublisher<AdminSeededModel>>();
                 IOptions<AdminSeederOptions> options = scope.ServiceProvider.GetService<IOptions<AdminSeederOptions>>();
+                IOptions<ResetPasswordOptions> resetPasswordOptions = scope.ServiceProvider.GetService<IOptions<ResetPasswordOptions>>();
 
-                AdminSeeder service = new AdminSeeder(authenticationBusinessLogic, publisher, options);
+                AdminSeeder service = new AdminSeeder(authenticationBusinessLogic, publisher, options, resetPasswordOptions);
 
                 Task task = service.Seed();
             
