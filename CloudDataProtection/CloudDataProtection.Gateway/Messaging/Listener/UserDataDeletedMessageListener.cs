@@ -21,7 +21,7 @@ namespace CloudDataProtection.Messaging.Listener
             _scope = serviceScopeFactory.CreateScope();
         }
 
-        protected override string RoutingKey => RoutingKeys.UserDataDeleted;
+        protected override string RoutingKey => RoutingKeys.ClientDataDeleted;
         protected override string Queue => "4E837635-178E-4063-981B-5B9B56C07CAD";
         public override async Task HandleMessage(UserDataDeletedModel model)
         {

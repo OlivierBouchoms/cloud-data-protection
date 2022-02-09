@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 
 namespace CloudDataProtection
 {
@@ -45,10 +46,11 @@ namespace CloudDataProtection
         {
             using (var scope = webHost.Services.CreateScope())
             {
-                AuthenticationBusinessLogic logic = scope.ServiceProvider.GetService<AuthenticationBusinessLogic>();
-                IMessagePublisher<UserResult> publisher = scope.ServiceProvider.GetService<IMessagePublisher<UserResult>>();
+                AuthenticationBusinessLogic authenticationBusinessLogic = scope.ServiceProvider.GetService<AuthenticationBusinessLogic>();
+                IMessagePublisher<AdminSeededModel> publisher = scope.ServiceProvider.GetService<IMessagePublisher<AdminSeededModel>>();
+                IOptions<AdminSeederOptions> options = scope.ServiceProvider.GetService<IOptions<AdminSeederOptions>>();
 
-                UserSeeder service = new UserSeeder(logic, publisher);
+                AdminSeeder service = new AdminSeeder(authenticationBusinessLogic, publisher, options);
 
                 Task task = service.Seed();
             

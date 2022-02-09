@@ -16,7 +16,7 @@ namespace CloudDataProtection.Services.MailService.Messaging.Listener
             _logic = logic;
         }
 
-        protected override string RoutingKey => RoutingKeys.UserDeletionComplete;
+        protected override string RoutingKey => RoutingKeys.ClientDeletionComplete;
         protected override string Queue => "C5256413-C463-4AC3-92A7-EBFBA6CFA038";
         public override async Task HandleMessage(UserDeletionCompleteModel model)
         {

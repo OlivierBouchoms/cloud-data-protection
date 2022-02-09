@@ -26,6 +26,13 @@ namespace CloudDataProtection.Data
             return await _context.User.FirstOrDefaultAsync(u => u.Email == email);
         }
 
+        public async Task<ICollection<User>> GetAll(UserRole role)
+        {
+            return await _context.User
+                .Where(u => u.Role == role)
+                .ToArrayAsync();
+        }
+
         public async Task Update(User user)
         {
             _context.User.Update(user);

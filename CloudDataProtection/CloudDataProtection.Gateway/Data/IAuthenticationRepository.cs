@@ -8,6 +8,7 @@ namespace CloudDataProtection.Data
     {
         Task<User> Get(long id);
         Task<User> Get(string email);
+        Task<ICollection<User>> GetAll(UserRole role);
         Task Update(User user);
 
         Task Create(User user);

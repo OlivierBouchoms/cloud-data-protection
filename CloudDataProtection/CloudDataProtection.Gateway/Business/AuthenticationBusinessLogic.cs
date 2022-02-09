@@ -44,6 +44,12 @@ namespace CloudDataProtection.Business
                 return BusinessResult<User>.Error("Invalid username or password");
             }
 
+            if (!user.PasswordSetAt.HasValue)
+            {
+                // TODO Determine nice error message
+                return BusinessResult<User>.Error("Password has not been set");
+            }
+
             if (!_passwordHasher.Match(user.Password, password))
             {
                 return BusinessResult<User>.Error("Invalid username or password");
@@ -76,25 +82,46 @@ namespace CloudDataProtection.Business
             return BusinessResult<User>.Ok(user);
         }
 
+        public async Task<BusinessResult<ICollection<User>>> GetAll(UserRole role)
+        {
+            ICollection<User> users = await _repository.GetAll(role);
+
+            return BusinessResult<ICollection<User>>.Ok(users);
+        }
+
+        public async Task<BusinessResult<User>> Create(User user)
+        {
+            user.Password = null;
+            user.PasswordSetAt = null;
+
+            return await CreateInternal(user);
+        }
+
         public async Task<BusinessResult<User>> Create(User user, string password)
+        {
+            if (string.IsNullOrWhiteSpace(password) || password.Length < MinimumPasswordLength)
+            {
+                return BusinessResult<User>.Error($"Password must be at least {MinimumPasswordLength} characters long");
+            }
+            
+            user.Password = _passwordHasher.HashPassword(password);
+            user.PasswordSetAt = DateTime.Now;
+
+            return await CreateInternal(user);
+        }
+
+        private async Task<BusinessResult<User>> CreateInternal(User user)
         {
             if (user.Email == null || !new EmailAddressAttribute().IsValid(user.Email))
             {
                 return BusinessResult<User>.Error("Invalid email provided");
             }
 
-            if (string.IsNullOrWhiteSpace(password) || password.Length < MinimumPasswordLength)
-            {
-                return BusinessResult<User>.Error($"Password must be at least {MinimumPasswordLength} characters long");
-            }
-            
             if (await _repository.Get(user.Email) != null)
             {
                 return BusinessResult<User>.Error($"A user with email {user.Email} already exists");
             }
 
-            user.Password = _passwordHasher.HashPassword(password);
-            
             await _repository.Create(user);
 
             return BusinessResult<User>.Ok(user);

@@ -18,6 +18,7 @@ using CloudDataProtection.Messaging.Server;
 using CloudDataProtection.Ocelot;
 using CloudDataProtection.Ocelot.Swagger;
 using CloudDataProtection.Password;
+using CloudDataProtection.Seeder;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -68,7 +69,8 @@ namespace CloudDataProtection
 
             ConfigureAuthentication(services);
             
-            services.AddLazy<IMessagePublisher<UserResult>, UserRegisteredMessagePublisher>();
+            services.AddLazy<IMessagePublisher<AdminSeededModel>, AdminSeededMessagePublisher>();
+            services.AddLazy<IMessagePublisher<ClientResult>, ClientRegisteredMessagePublisher>();
             services.AddLazy<IMessagePublisher<UserDeletedModel>, UserDeletedMessagePublisher>();
             services.AddLazy<IMessagePublisher<UserDeletionCompleteModel>, UserDeletionCompleteMessagePublisher>();
             services.AddLazy<IMessagePublisher<EmailChangeRequestedModel>, EmailChangeRequestedMessagePublisher>();
@@ -82,6 +84,7 @@ namespace CloudDataProtection
             services.Configure<RabbitMqConfiguration>(options => Configuration.GetSection("RabbitMq").Bind(options));
             services.Configure<JwtSecretOptions>(options => Configuration.GetSection("Jwt").Bind(options));
             services.Configure<ChangeEmailOptions>(options => Configuration.GetSection("ChangeEmail").Bind(options));
+            services.Configure<AdminSeederOptions>(options => Configuration.GetSection("Admin").Bind(options));
 
             services.AddHostedService<GetUserEmailRpcServer>();
             services.AddHostedService<UserDataDeletedMessageListener>();

@@ -25,7 +25,8 @@ namespace CloudDataProtection.Services.MailService
         {
             services.Configure<RabbitMqConfiguration>(options => Configuration.GetSection("RabbitMq").Bind(options));
             
-            services.AddHostedService<UserRegisteredMessageListener>();
+            services.AddHostedService<AdminSeededMessageListener>();
+            services.AddHostedService<ClientRegisteredMessageListener>();
             services.AddHostedService<GoogleAccountConnectedMessageListener>();
             services.AddHostedService<UserDeletionCompleteMessageListener>();
             services.AddHostedService<EmailChangeRequestedMessageListener>();
