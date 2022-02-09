@@ -2,7 +2,7 @@ using System;
 
 namespace CloudDataProtection.Dto.Result
 {
-    public class AdminSeededModel
+    public class AdminRegisteredModel
     {
         public long Id { get; set; }
         

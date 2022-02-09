@@ -34,7 +34,7 @@ namespace CloudDataProtection.Services.MailService.Business
             string subject = "Welcome to Cloud Data Protection";
             string content = @$"
 <p>Dear Sir / Madam,<br><br>
-    Congratulations on setting up Cloud Data Protection. Please click <a href='{model.Url}'>here</a> to set up your password.<br><br>
+    Please click <a href='{model.Url}'>here</a> to set up your password.<br><br>
     If the link above doesn't work, please copy and paste the following link in your web browser: {model.Url}<br><br>
     This link will expire at {model.Expiration.ToString("F")}<br><br>
     Yours sincerely,<br><br>

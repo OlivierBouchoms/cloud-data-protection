@@ -8,18 +8,18 @@ using Microsoft.Extensions.Options;
 
 namespace CloudDataProtection.Services.MailService.Messaging.Listener
 {
-    public class AdminSeededMessageListener : RabbitMqMessageListener<AdminSeededModel>
+    public class AdminRegisteredMessageListener : RabbitMqMessageListener<AdminRegisteredModel>
     {
         private readonly RegistrationMailLogic _registrationMailLogic;
 
-        public AdminSeededMessageListener(IOptions<RabbitMqConfiguration> options, ILogger<AdminSeededMessageListener> logger, RegistrationMailLogic registrationMailLogic) : base(options, logger)
+        public AdminRegisteredMessageListener(IOptions<RabbitMqConfiguration> options, ILogger<AdminRegisteredMessageListener> logger, RegistrationMailLogic registrationMailLogic) : base(options, logger)
         {
             _registrationMailLogic = registrationMailLogic;
         }
 
-        protected override string RoutingKey => RoutingKeys.AdminSeeded;
+        protected override string RoutingKey => RoutingKeys.AdminRegistered;
         protected override string Queue => "84744B3F-604C-4EB9-B669-B819D1AA4557";
-        public override async Task HandleMessage(AdminSeededModel model)
+        public override async Task HandleMessage(AdminRegisteredModel model)
         {
             ResetPasswordModel resetPasswordModel = new ResetPasswordModel
             {

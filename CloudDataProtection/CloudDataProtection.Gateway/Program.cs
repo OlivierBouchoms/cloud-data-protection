@@ -48,7 +48,7 @@ namespace CloudDataProtection
             using (var scope = webHost.Services.CreateScope())
             {
                 AuthenticationBusinessLogic authenticationBusinessLogic = scope.ServiceProvider.GetService<AuthenticationBusinessLogic>();
-                IMessagePublisher<AdminSeededModel> publisher = scope.ServiceProvider.GetService<IMessagePublisher<AdminSeededModel>>();
+                IMessagePublisher<AdminRegisteredModel> publisher = scope.ServiceProvider.GetService<IMessagePublisher<AdminRegisteredModel>>();
                 IOptions<AdminSeederOptions> options = scope.ServiceProvider.GetService<IOptions<AdminSeederOptions>>();
                 IOptions<ResetPasswordOptions> resetPasswordOptions = scope.ServiceProvider.GetService<IOptions<ResetPasswordOptions>>();
 

@@ -4,7 +4,7 @@
     {
         public static readonly string BackupConfigurationEntered = "BackupConfigurationEntered";
 
-        public static readonly string AdminSeeded = "AdminRegistered";
+        public static readonly string AdminRegistered = "AdminRegistered";
 
         public static readonly string ClientRegistered = "ClientRegistered";
         

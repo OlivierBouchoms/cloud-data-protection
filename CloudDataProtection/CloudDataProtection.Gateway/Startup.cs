@@ -71,7 +71,7 @@ namespace CloudDataProtection
 
             ConfigureAuthentication(services);
             
-            services.AddLazy<IMessagePublisher<AdminSeededModel>, AdminSeededMessagePublisher>();
+            services.AddLazy<IMessagePublisher<AdminRegisteredModel>, AdminRegisteredMessagePublisher>();
             services.AddLazy<IMessagePublisher<ClientResult>, ClientRegisteredMessagePublisher>();
             services.AddLazy<IMessagePublisher<UserDeletedModel>, UserDeletedMessagePublisher>();
             services.AddLazy<IMessagePublisher<UserDeletionCompleteModel>, UserDeletionCompleteMessagePublisher>();

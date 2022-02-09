@@ -2,7 +2,7 @@ using System;
 
 namespace CloudDataProtection.Services.MailService.Dto
 {
-    public class AdminSeededModel
+    public class AdminRegisteredModel
     {
         public long Id { get; set; }
         

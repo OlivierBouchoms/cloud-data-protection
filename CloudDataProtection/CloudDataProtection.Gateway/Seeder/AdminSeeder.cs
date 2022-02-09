@@ -14,11 +14,11 @@ namespace CloudDataProtection.Seeder
     public class AdminSeeder
     {
         private readonly AuthenticationBusinessLogic _logic;
-        private readonly IMessagePublisher<AdminSeededModel> _messagePublisher;
+        private readonly IMessagePublisher<AdminRegisteredModel> _messagePublisher;
         private readonly AdminSeederOptions _options;
         private readonly ResetPasswordOptions _resetPasswordOptions;
 
-        public AdminSeeder(AuthenticationBusinessLogic logic, IMessagePublisher<AdminSeededModel> publisher, IOptions<AdminSeederOptions> options, IOptions<ResetPasswordOptions> resetPasswordOptions)
+        public AdminSeeder(AuthenticationBusinessLogic logic, IMessagePublisher<AdminRegisteredModel> publisher, IOptions<AdminSeederOptions> options, IOptions<ResetPasswordOptions> resetPasswordOptions)
         {
             _logic = logic;
             _messagePublisher = publisher;
@@ -54,7 +54,7 @@ namespace CloudDataProtection.Seeder
                 return;
             }
 
-            AdminSeededModel seededModel = new AdminSeededModel
+            AdminRegisteredModel registeredModel = new AdminRegisteredModel
             {
                 Email = adminUser.Email,
                 Id = adminUser.Id,
@@ -62,7 +62,7 @@ namespace CloudDataProtection.Seeder
                 Expiration = requestResetResult.Data.ExpiresAt
             };
 
-            await _messagePublisher.Send(seededModel);
+            await _messagePublisher.Send(registeredModel);
         }
     }
 }
