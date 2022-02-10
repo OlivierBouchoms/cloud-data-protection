@@ -10,7 +10,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CloudDataProtection.Migrations
 {
     [DbContext(typeof(AuthenticationDbContext))]
-    [Migration("20220209192539_ResetPasswordRequest")]
+    [Migration("20220210203416_ResetPasswordRequest")]
     partial class ResetPasswordRequest
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -83,6 +83,8 @@ namespace CloudDataProtection.Migrations
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("ResetPasswordRequest");
                 });
@@ -165,6 +167,17 @@ namespace CloudDataProtection.Migrations
                     b.HasIndex("UserDeletionHistoryId");
 
                     b.ToTable("UserDeletionHistoryProgress");
+                });
+
+            modelBuilder.Entity("CloudDataProtection.Entities.ResetPasswordRequest", b =>
+                {
+                    b.HasOne("CloudDataProtection.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("CloudDataProtection.Entities.UserDeletionHistoryProgress", b =>

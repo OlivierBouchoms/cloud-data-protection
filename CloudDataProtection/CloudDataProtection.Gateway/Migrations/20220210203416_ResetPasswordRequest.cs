@@ -24,7 +24,18 @@ namespace CloudDataProtection.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ResetPasswordRequest", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ResetPasswordRequest_User_UserId",
+                        column: x => x.UserId,
+                        principalTable: "User",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ResetPasswordRequest_UserId",
+                table: "ResetPasswordRequest",
+                column: "UserId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

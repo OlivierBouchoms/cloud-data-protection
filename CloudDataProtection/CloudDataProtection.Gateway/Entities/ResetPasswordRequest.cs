@@ -14,6 +14,9 @@ namespace CloudDataProtection.Entities
         [Required]
         public long UserId { get; set; }
         
+        [ForeignKey(nameof(UserId))]
+        public virtual User User { get; set; }
+        
         [Required]
         [Encrypt]
         public string Token { get; set; }

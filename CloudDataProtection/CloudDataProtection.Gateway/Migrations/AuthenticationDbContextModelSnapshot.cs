@@ -82,6 +82,8 @@ namespace CloudDataProtection.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("UserId");
+
                     b.ToTable("ResetPasswordRequest");
                 });
 
@@ -163,6 +165,17 @@ namespace CloudDataProtection.Migrations
                     b.HasIndex("UserDeletionHistoryId");
 
                     b.ToTable("UserDeletionHistoryProgress");
+                });
+
+            modelBuilder.Entity("CloudDataProtection.Entities.ResetPasswordRequest", b =>
+                {
+                    b.HasOne("CloudDataProtection.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("CloudDataProtection.Entities.UserDeletionHistoryProgress", b =>
