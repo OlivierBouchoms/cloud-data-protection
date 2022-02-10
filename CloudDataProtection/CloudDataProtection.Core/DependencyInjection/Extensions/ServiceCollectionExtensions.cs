@@ -67,34 +67,6 @@ namespace CloudDataProtection.Core.DependencyInjection.Extensions
             services.AddScoped<IJwtDecoder, JwtDecoder>();
         }
 
-        public static void ConfigureAuthentication(this IServiceCollection services, IConfiguration configuration, JwtBearerEvents events)
-        {
-            JwtSecretOptions options = new JwtSecretOptions();
-            
-            configuration.GetSection("Jwt").Bind(options);
-
-            services.AddAuthentication(x =>
-                {
-                    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                })
-                .AddJwtBearer(x =>
-                {
-                    x.Events = events;
-                    x.RequireHttpsMetadata = false;
-                    x.SaveToken = true;
-                    x.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(options.Key),
-                        ValidateIssuer = false,
-                        ValidateAudience = false
-                    };
-                });
-            
-            services.AddScoped<IJwtDecoder, JwtDecoder>();
-        }
-
         public static void ConfigureAuthorization(this IServiceCollection services)
         {
             services.AddAuthorization(x =>

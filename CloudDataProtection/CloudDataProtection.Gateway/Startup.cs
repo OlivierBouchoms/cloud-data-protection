@@ -130,7 +130,31 @@ namespace CloudDataProtection
                 OnTokenValidated = OnTokenValidated
             };
 
-            services.ConfigureAuthentication(Configuration, events);
+            JwtSecretOptions options = new JwtSecretOptions();
+            
+            Configuration.GetSection("Jwt").Bind(options);
+
+            services.AddAuthentication(x =>
+                {
+                    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                })
+                .AddJwtBearer(x =>
+                {
+                    x.Events = events;
+                    x.RequireHttpsMetadata = false;
+                    x.SaveToken = true;
+                    x.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(options.Key),
+                        ValidateIssuer = false,
+                        ValidateAudience = false
+                    };
+                });
+            
+            services.AddScoped<IJwtDecoder, JwtDecoder>();
+
             services.ConfigureAuthorization();
 
             services.AddScoped<IAuthenticationRepository, AuthenticationRepository>();
