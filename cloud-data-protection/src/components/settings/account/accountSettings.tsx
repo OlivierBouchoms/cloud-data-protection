@@ -148,7 +148,7 @@ const AccountSettings = () => {
                     <ChangePassword onClose={onChangePasswordClose} onSubmit={onChangePasswordSubmit} loading={isChangePasswordLoading} />
                 }
             </div>
-            {/*{user.role === UserRole.Client &&*/}
+            {user.role === UserRole.Client &&
                 <div className='account-settings__section account-settings__delete'>
                     <Typography variant='h5'>Delete account</Typography>
                     <p>If you don't want to use the services of Cloud Data Protection, you can delete your account. All your personal data will be deleted, leaving no trace at all.</p>
@@ -156,10 +156,10 @@ const AccountSettings = () => {
                         Delete my account
                     </Button>
                     {isDeleteAccountVisible &&
-                    <DeleteAccount onClose={onDeleteAccountClose} onSubmit={onDeleteAccountSubmit} loading={isDeleteAccountLoading} />
+                        <DeleteAccount onClose={onDeleteAccountClose} onSubmit={onDeleteAccountSubmit} loading={isDeleteAccountLoading} />
                     }
                 </div>
-            {/*}*/}
+            }
         </div>
     )
 }
