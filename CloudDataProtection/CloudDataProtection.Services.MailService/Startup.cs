@@ -27,6 +27,7 @@ namespace CloudDataProtection.Services.MailService
             
             services.AddHostedService<AdminRegisteredMessageListener>();
             services.AddHostedService<ClientRegisteredMessageListener>();
+            services.AddHostedService<PasswordResetMessageListener>();
             services.AddHostedService<GoogleAccountConnectedMessageListener>();
             services.AddHostedService<UserDeletionCompleteMessageListener>();
             services.AddHostedService<EmailChangeRequestedMessageListener>();

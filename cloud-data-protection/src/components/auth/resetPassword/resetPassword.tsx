@@ -66,7 +66,7 @@ const ResetPassword = (props: RouteComponentProps) => {
     }
 
     const onSuccess = () => {
-        enqueueSnackbar('Your password has been updated. You can now log in using the specified credentials', snackbarOptions);
+        enqueueSnackbar('Your password has been set. You can now log in using the specified credentials', snackbarOptions);
 
         history.push("/login");
     }

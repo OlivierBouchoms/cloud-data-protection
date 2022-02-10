@@ -24,6 +24,7 @@ namespace CloudDataProtection.Controllers
     {
         private readonly Lazy<IMessagePublisher<UserDeletedModel>> _userDeletedMessagePublisher;
         private readonly Lazy<IMessagePublisher<EmailChangeRequestedModel>> _emailChangeRequestedMessagePublisher;
+        private readonly Lazy<IMessagePublisher<PasswordResetModel>> _passwordResetMessagePublisher;
         private readonly ChangeEmailOptions _changeEmailOptions;
         private readonly UserBusinessLogic _userBusinessLogic;
         private readonly AuthenticationBusinessLogic _authenticationBusinessLogic;
@@ -31,12 +32,14 @@ namespace CloudDataProtection.Controllers
         public AccountController(IJwtDecoder jwtDecoder,
             Lazy<IMessagePublisher<UserDeletedModel>> userDeletedMessagePublisher, 
             Lazy<IMessagePublisher<EmailChangeRequestedModel>> emailChangeRequestedMessagePublisher,
+            Lazy<IMessagePublisher<PasswordResetModel>> passwordResetMessagePublisher,
             IOptions<ChangeEmailOptions> changeEmailOptions,
             UserBusinessLogic userBusinessLogic, 
             AuthenticationBusinessLogic authenticationBusinessLogic) : base(jwtDecoder)
         {
             _userDeletedMessagePublisher = userDeletedMessagePublisher;
             _userBusinessLogic = userBusinessLogic;
+            _passwordResetMessagePublisher = passwordResetMessagePublisher;
             _changeEmailOptions = changeEmailOptions.Value;
             _authenticationBusinessLogic = authenticationBusinessLogic;
             _emailChangeRequestedMessagePublisher = emailChangeRequestedMessagePublisher;
@@ -106,12 +109,20 @@ namespace CloudDataProtection.Controllers
         [AllowAnonymous]
         public async Task<ActionResult> ResetPassword(ResetPasswordInput input)
         {
-            BusinessResult updatePasswordResult = await _authenticationBusinessLogic.UpdatePassword(input.Password, input.Token);
+            BusinessResult<User> updatePasswordResult = await _authenticationBusinessLogic.UpdatePassword(input.Password, input.Token);
             
             if (!updatePasswordResult.Success)
             {
                 return Conflict(ConflictResponse.Create(updatePasswordResult.Message));
             }
+
+            PasswordResetModel model = new PasswordResetModel
+            {
+                UserId = updatePasswordResult.Data.Id,
+                Email = updatePasswordResult.Data.Email
+            };
+
+            await _passwordResetMessagePublisher.Value.Send(model);
 
             return Ok();
         }

@@ -252,47 +252,46 @@ namespace CloudDataProtection.Business
             return BusinessResult<ResetPasswordRequest>.Ok(request);
         }
 
-        public async Task<BusinessResult> UpdatePassword(string password, string token)
+        public async Task<BusinessResult<User>> UpdatePassword(string password, string token)
         {
             if (string.IsNullOrEmpty(token))
             {
-                return BusinessResult.Error("No token has been provided");
+                return BusinessResult<User>.Error("No token has been provided");
             }
 
             ResetPasswordRequest request = await _repository.GetResetPasswordRequest(token);
 
             if (request == null)
             {
-                return BusinessResult.Error("An invalid token has been provided");
+                return BusinessResult<User>.Error("An invalid token has been provided");
             }
 
             if (!request.IsValid)
             {
-                return BusinessResult.Error("The token has expired or is already used");
+                return BusinessResult<User>.Error("The token has expired or is already used");
             }
 
             User user = await _repository.Get(request.UserId);
 
             if (user == null)
             {
-                return BusinessResult.Error("An invalid token has been provided");
+                return BusinessResult<User>.Error("An invalid token has been provided");
             }
             
             if (string.IsNullOrWhiteSpace(password) || password.Length < MinimumPasswordLength)
             {
-                return BusinessResult.Error($"Password must be at least {MinimumPasswordLength} characters long");
+                return BusinessResult<User>.Error($"Password must be at least {MinimumPasswordLength} characters long");
             }
 
             user.Password = _passwordHasher.HashPassword(password);
             user.PasswordSetAt = DateTime.Now;
 
-            await _repository.Update(user);
-            
             request.Invalidate();
 
+            await _repository.Update(user);
             await _repository.Update(request);
             
-            return BusinessResult.Ok();
+            return BusinessResult<User>.Ok(user);
         }
 
         public async Task<BusinessResult> ChangePassword(long userId, string currentPassword, string newPassword)
