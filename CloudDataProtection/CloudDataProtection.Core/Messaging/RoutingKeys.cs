@@ -18,6 +18,6 @@
 
         public static readonly string EmailChangeRequested = "EmailChangeRequested";
 
-        public static readonly string PasswordReset = "PasswordReset";
+        public static readonly string PasswordUpdated = "PasswordUpdated";
     }
 }

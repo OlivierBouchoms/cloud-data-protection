@@ -84,9 +84,9 @@ namespace CloudDataProtection.Services.MailService.Business
         }
 
         /// <summary>
-        /// Sends a mail to a user ocnfirming their password is reset
+        /// Sends a mail to a user confirming their password is updated
         /// </summary>
-        public async Task SendPasswordReset(PasswordResetModel model)
+        public async Task SendPasswordUpdated(PasswordUpdatedModel model)
         {
             string subject = "Your password was reset";
             string content = @$"

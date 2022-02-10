@@ -1,6 +1,6 @@
 namespace CloudDataProtection.Dto.Result
 {
-    public class PasswordResetModel
+    public class PasswordUpdatedModel
     {
         public string Email { get; set; }
         public long UserId { get; set; }

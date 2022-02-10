@@ -24,7 +24,7 @@ namespace CloudDataProtection.Controllers
     {
         private readonly Lazy<IMessagePublisher<UserDeletedModel>> _userDeletedMessagePublisher;
         private readonly Lazy<IMessagePublisher<EmailChangeRequestedModel>> _emailChangeRequestedMessagePublisher;
-        private readonly Lazy<IMessagePublisher<PasswordResetModel>> _passwordResetMessagePublisher;
+        private readonly Lazy<IMessagePublisher<PasswordUpdatedModel>> _passwordUpdatedMessagePublisher;
         private readonly ChangeEmailOptions _changeEmailOptions;
         private readonly UserBusinessLogic _userBusinessLogic;
         private readonly AuthenticationBusinessLogic _authenticationBusinessLogic;
@@ -32,14 +32,14 @@ namespace CloudDataProtection.Controllers
         public AccountController(IJwtDecoder jwtDecoder,
             Lazy<IMessagePublisher<UserDeletedModel>> userDeletedMessagePublisher, 
             Lazy<IMessagePublisher<EmailChangeRequestedModel>> emailChangeRequestedMessagePublisher,
-            Lazy<IMessagePublisher<PasswordResetModel>> passwordResetMessagePublisher,
+            Lazy<IMessagePublisher<PasswordUpdatedModel>> passwordUpdatedMessagePublisher,
             IOptions<ChangeEmailOptions> changeEmailOptions,
             UserBusinessLogic userBusinessLogic, 
             AuthenticationBusinessLogic authenticationBusinessLogic) : base(jwtDecoder)
         {
             _userDeletedMessagePublisher = userDeletedMessagePublisher;
             _userBusinessLogic = userBusinessLogic;
-            _passwordResetMessagePublisher = passwordResetMessagePublisher;
+            _passwordUpdatedMessagePublisher = passwordUpdatedMessagePublisher;
             _changeEmailOptions = changeEmailOptions.Value;
             _authenticationBusinessLogic = authenticationBusinessLogic;
             _emailChangeRequestedMessagePublisher = emailChangeRequestedMessagePublisher;
@@ -116,13 +116,13 @@ namespace CloudDataProtection.Controllers
                 return Conflict(ConflictResponse.Create(updatePasswordResult.Message));
             }
 
-            PasswordResetModel model = new PasswordResetModel
+            PasswordUpdatedModel model = new PasswordUpdatedModel
             {
                 UserId = updatePasswordResult.Data.Id,
                 Email = updatePasswordResult.Data.Email
             };
 
-            await _passwordResetMessagePublisher.Value.Send(model);
+            await _passwordUpdatedMessagePublisher.Value.Send(model);
 
             return Ok();
         }

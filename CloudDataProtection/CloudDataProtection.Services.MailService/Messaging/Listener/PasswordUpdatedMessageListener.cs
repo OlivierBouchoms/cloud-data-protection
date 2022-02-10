@@ -8,20 +8,20 @@ using Microsoft.Extensions.Options;
 
 namespace CloudDataProtection.Services.MailService.Messaging.Listener
 {
-    public class PasswordResetMessageListener : RabbitMqMessageListener<PasswordResetModel>
+    public class PasswordUpdatedMessageListener : RabbitMqMessageListener<PasswordUpdatedModel>
     {
         private readonly AccountMailLogic _mailLogic;
 
-        public PasswordResetMessageListener(IOptions<RabbitMqConfiguration> options, ILogger<PasswordResetMessageListener> logger, AccountMailLogic mailLogic) : base(options, logger)
+        public PasswordUpdatedMessageListener(IOptions<RabbitMqConfiguration> options, ILogger<PasswordUpdatedMessageListener> logger, AccountMailLogic mailLogic) : base(options, logger)
         {
             _mailLogic = mailLogic;
         }
 
-        protected override string RoutingKey => RoutingKeys.PasswordReset;
+        protected override string RoutingKey => RoutingKeys.PasswordUpdated;
         protected override string Queue => "408AE67B-1A7D-4216-9CEA-2C256011B3BF";
-        public override async Task HandleMessage(PasswordResetModel model)
+        public override async Task HandleMessage(PasswordUpdatedModel model)
         {
-            await _mailLogic.SendPasswordReset(model);
+            await _mailLogic.SendPasswordUpdated(model);
         }
     }
 }
