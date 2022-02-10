@@ -294,30 +294,30 @@ namespace CloudDataProtection.Business
             return BusinessResult<User>.Ok(user);
         }
 
-        public async Task<BusinessResult> ChangePassword(long userId, string currentPassword, string newPassword)
+        public async Task<BusinessResult<User>> ChangePassword(long userId, string currentPassword, string newPassword)
         {
             User user = await _repository.Get(userId);
             
             if (user == null)
             {
-                return BusinessResult.Error($"Could not find user with id = {userId}");
+                return BusinessResult<User>.Error($"Could not find user with id = {userId}");
             }
             
             if (!_passwordHasher.Match(user.Password, currentPassword))
             {
-                return BusinessResult.Error("Current password is invalid");
+                return BusinessResult<User>.Error("Current password is invalid");
             }
             
             if (string.IsNullOrWhiteSpace(newPassword) || newPassword.Length < MinimumPasswordLength)
             {
-                return BusinessResult.Error($"Password must be at least {MinimumPasswordLength} characters long");
+                return BusinessResult<User>.Error($"Password must be at least {MinimumPasswordLength} characters long");
             }
 
             user.Password = _passwordHasher.HashPassword(newPassword);
 
             await _repository.Update(user);
 
-            return BusinessResult.Ok();
+            return BusinessResult<User>.Ok(user);
         }
     }
 }

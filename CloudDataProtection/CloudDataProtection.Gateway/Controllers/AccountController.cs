@@ -94,12 +94,20 @@ namespace CloudDataProtection.Controllers
         [Route("ChangePassword")]
         public async Task<ActionResult> ChangePassword(ChangePasswordInput input)
         {
-            BusinessResult changePasswordResult = await _authenticationBusinessLogic.ChangePassword(UserId, input.CurrentPassword, input.NewPassword);
+            BusinessResult<User> changePasswordResult = await _authenticationBusinessLogic.ChangePassword(UserId, input.CurrentPassword, input.NewPassword);
             
             if (!changePasswordResult.Success)
             {
                 return Conflict(ConflictResponse.Create(changePasswordResult.Message));
             }
+
+            PasswordUpdatedModel model = new PasswordUpdatedModel
+            {
+                Email = changePasswordResult.Data.Email,
+                UserId = changePasswordResult.Data.Id
+            };
+
+            await _passwordUpdatedMessagePublisher.Value.Send(model);
 
             return Ok();
         }
