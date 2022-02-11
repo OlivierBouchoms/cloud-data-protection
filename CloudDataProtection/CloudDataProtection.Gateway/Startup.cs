@@ -83,6 +83,7 @@ namespace CloudDataProtection
             services.AddScoped<IUserHistoryRepository, UserHistoryRepository>();
 
             services.AddTransient<UserBusinessLogic>();
+            services.AddTransient<AdminSeeder>();
 
             services.Configure<RabbitMqConfiguration>(options => Configuration.GetSection("RabbitMq").Bind(options));
             services.Configure<JwtSecretOptions>(options => Configuration.GetSection("Jwt").Bind(options));

@@ -43,18 +43,17 @@ namespace CloudDataProtection.Business
 
             if (user == null)
             {
-                return BusinessResult<User>.Error("Invalid username or password");
+                return BusinessResult<User>.Error("Invalid username or password.");
             }
 
             if (!user.PasswordSetAt.HasValue)
             {
-                // TODO Determine nice error message
-                return BusinessResult<User>.Error("Your password has not been set. Please set your password before logging in");
+                return BusinessResult<User>.Error("Your password has not been set yet. Please request a password reset before attempting to log in.");
             }
 
             if (!_passwordHasher.Match(user.Password, password))
             {
-                return BusinessResult<User>.Error("Invalid username or password");
+                return BusinessResult<User>.Error("Invalid username or password.");
             }
 
             return BusinessResult<User>.Ok(user);
@@ -72,6 +71,7 @@ namespace CloudDataProtection.Business
             return BusinessResult<User>.Ok(user);
         }
 
+        [Obsolete]
         public async Task<BusinessResult<User>> Get(string email)
         {
             User user = await _repository.Get(email);
@@ -91,6 +91,9 @@ namespace CloudDataProtection.Business
             return BusinessResult<ICollection<User>>.Ok(users);
         }
 
+        /// <summary>
+        /// Creates a user account without a password. A password reset is required to be able to log in.
+        /// </summary>
         public async Task<BusinessResult<User>> Create(User user)
         {
             user.Password = null;
@@ -99,6 +102,9 @@ namespace CloudDataProtection.Business
             return await CreateInternal(user);
         }
 
+        /// <summary>
+        /// Creates a user account with a given password.
+        /// </summary>
         public async Task<BusinessResult<User>> Create(User user, string password)
         {
             if (string.IsNullOrWhiteSpace(password) || password.Length < MinimumPasswordLength)
@@ -165,17 +171,16 @@ namespace CloudDataProtection.Business
 
             IEnumerable<ChangeEmailRequest> oldRequests = await _repository.GetAll(userId);
             
-            ICollection<ChangeEmailRequest> validRequests = oldRequests.Where(r => r.IsValid).ToList();
-
-            if (validRequests.Any())
-            {
-                foreach (ChangeEmailRequest changeEmailRequest in validRequests)
+            ICollection<ChangeEmailRequest> validRequests = oldRequests
+                .Where(r => r.IsValid)
+                .Select(r =>
                 {
-                    changeEmailRequest.Invalidate();
-                }
+                    r.Invalidate();
+                    return r;
+                })
+                .ToList();
 
-                await _repository.Update(validRequests);
-            }
+            await _repository.Update(validRequests);
 
             ChangeEmailRequest request = new ChangeEmailRequest
             {
@@ -228,17 +233,16 @@ namespace CloudDataProtection.Business
         {
             IEnumerable<ResetPasswordRequest> oldRequests = await _repository.GetResetPasswordRequests(user.Id);
             
-            ICollection<ResetPasswordRequest> validRequests = oldRequests.Where(r => r.IsValid).ToList();
-
-            if (validRequests.Any())
-            {
-                foreach (ResetPasswordRequest resetPasswordRequest in validRequests)
+            ICollection<ResetPasswordRequest> validRequests = oldRequests
+                .Where(r => r.IsValid)
+                .Select(r =>
                 {
-                    resetPasswordRequest.Invalidate();
-                }
+                    r.Invalidate();
+                    return r;
+                })
+                .ToList();
 
-                await _repository.Update(validRequests);
-            }
+            await _repository.Update(validRequests);
 
             ResetPasswordRequest request = new ResetPasswordRequest
             {
