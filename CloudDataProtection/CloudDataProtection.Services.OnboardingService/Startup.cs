@@ -74,6 +74,7 @@ namespace CloudDataProtection.Services.Onboarding
             services.Configure<RabbitMqConfiguration>(options => Configuration.GetSection("RabbitMq").Bind(options));
             services.Configure<OnboardingOptions>(options => Configuration.GetSection("Google:Onboarding").Bind(options));
 
+            services.AddHostedService<ClientRegisteredMessageListener>();
             services.AddHostedService<BackupConfigurationEnteredMessageListener>();
             services.AddHostedService<UserDeletedMessageListener>();
 

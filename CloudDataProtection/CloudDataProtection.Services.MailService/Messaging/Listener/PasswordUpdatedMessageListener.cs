@@ -18,7 +18,7 @@ namespace CloudDataProtection.Services.MailService.Messaging.Listener
         }
 
         protected override string RoutingKey => RoutingKeys.PasswordUpdated;
-        protected override string Queue => "408AE67B-1A7D-4216-9CEA-2C256011B3BF";
+        
         public override async Task HandleMessage(PasswordUpdatedModel model)
         {
             await _mailLogic.SendPasswordUpdated(model);

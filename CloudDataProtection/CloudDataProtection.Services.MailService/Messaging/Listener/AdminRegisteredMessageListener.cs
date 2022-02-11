@@ -18,7 +18,7 @@ namespace CloudDataProtection.Services.MailService.Messaging.Listener
         }
 
         protected override string RoutingKey => RoutingKeys.AdminRegistered;
-        protected override string Queue => "84744B3F-604C-4EB9-B669-B819D1AA4557";
+        
         public override async Task HandleMessage(AdminRegisteredModel model)
         {
             ResetPasswordModel resetPasswordModel = new ResetPasswordModel
