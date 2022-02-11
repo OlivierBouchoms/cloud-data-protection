@@ -68,23 +68,20 @@ namespace CloudDataProtection.Controllers
 
             BusinessResult<User> businessResult = await _logic.Create(user, model.Password);
 
-            // TODO
-            if (businessResult.Success)
+            if (!businessResult.Success)
             {
-                ClientResult result = new ClientResult
-                {
-                    Email = user.Email,
-                    Id = user.Id
-                };
+                return Conflict(ConflictResponse.Create(businessResult.Message));
+            }
+            
+            ClientResult result = new ClientResult
+            {
+                Email = user.Email,
+                Id = user.Id
+            };
 
-                await _messagePublisher.Value.Send(result);
-                
-                return Ok(result);
-            }
-            else
-            {
-                return Conflict(businessResult.Message);
-            }
+            await _messagePublisher.Value.Send(result);
+            
+            return Ok(result);
         }
     }
 }

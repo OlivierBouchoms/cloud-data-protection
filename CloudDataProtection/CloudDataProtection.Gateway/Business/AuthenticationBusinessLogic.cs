@@ -49,7 +49,7 @@ namespace CloudDataProtection.Business
             if (!user.PasswordSetAt.HasValue)
             {
                 // TODO Determine nice error message
-                return BusinessResult<User>.Error("Password has not been set");
+                return BusinessResult<User>.Error("Your password has not been set. Please set your password before logging in");
             }
 
             if (!_passwordHasher.Match(user.Password, password))
