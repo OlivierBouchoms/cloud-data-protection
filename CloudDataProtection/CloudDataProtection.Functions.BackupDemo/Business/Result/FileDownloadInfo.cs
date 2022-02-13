@@ -2,7 +2,7 @@
 
 namespace CloudDataProtection.Functions.BackupDemo.Triggers.Dto.Output
 {
-    public class FileDownloadOutput
+    public class FileDownloadInfo
     {
         public byte[] Bytes { get; set; }
         

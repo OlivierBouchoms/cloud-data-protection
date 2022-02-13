@@ -56,7 +56,7 @@ namespace CloudDataProtection.Functions.BackupDemo.Triggers
                 return new InternalServerErrorResult();
             }
 
-            FileInfoOutput dto = new()
+            FileInfoOutput output = new()
             {
                 Name = result.Data.DisplayName,
                 Bytes = result.Data.Bytes,
@@ -66,7 +66,7 @@ namespace CloudDataProtection.Functions.BackupDemo.Triggers
                     .ToList()
             };
             
-            return new OkObjectResult(dto);
+            return new OkObjectResult(output);
         }
     }
 }

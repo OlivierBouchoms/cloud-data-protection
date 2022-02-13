@@ -49,7 +49,7 @@ namespace CloudDataProtection.Functions.BackupDemo.Triggers
         {
             FileManagerLogic logic = FileManagerLogicFactory.Instance.GetLogic();
 
-            BusinessResult<FileDownloadOutput> result = await logic.Download(id);
+            BusinessResult<FileDownloadInfo> result = await logic.Download(id);
 
             if (!result.Success || !result.Data.DownloadedFrom.HasValue)
             {

@@ -52,7 +52,7 @@ namespace CloudDataProtection.Functions.BackupDemo.Triggers
                 return new InternalServerErrorResult();
             }
 
-            FileUploadOutput dto = new()
+            FileUploadOutput output = new()
             {
                 Id = result.Data.Id.ToString(),
                 Bytes = result.Data.Bytes,
@@ -63,7 +63,7 @@ namespace CloudDataProtection.Functions.BackupDemo.Triggers
                     .ToList()
             };
             
-            return new OkObjectResult(dto);
+            return new OkObjectResult(output);
         }
     }
 }

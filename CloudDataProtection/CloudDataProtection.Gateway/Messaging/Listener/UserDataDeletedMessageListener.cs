@@ -6,7 +6,6 @@ using CloudDataProtection.Core.Messaging.RabbitMq;
 using CloudDataProtection.Core.Result;
 using CloudDataProtection.Entities;
 using CloudDataProtection.Messaging.Dto;
-using CloudDataProtection.Messaging.Publisher;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;

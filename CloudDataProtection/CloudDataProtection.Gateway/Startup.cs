@@ -1,8 +1,6 @@
-using System.Security.Claims;
 using System.Threading.Tasks;
 using CloudDataProtection.Business;
 using CloudDataProtection.Business.Options;
-using CloudDataProtection.Core.Controllers.Data;
 using CloudDataProtection.Core.Cryptography.Generator;
 using CloudDataProtection.Core.DependencyInjection.Extensions;
 using CloudDataProtection.Core.Jwt;

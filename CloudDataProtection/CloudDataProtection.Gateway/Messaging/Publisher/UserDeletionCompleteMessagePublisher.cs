@@ -1,5 +1,6 @@
 ﻿using CloudDataProtection.Core.Messaging;
 using CloudDataProtection.Core.Messaging.RabbitMq;
+using CloudDataProtection.Messaging.Dto;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -12,12 +13,5 @@ namespace CloudDataProtection.Messaging.Publisher
         }
 
         protected override string RoutingKey => RoutingKeys.ClientDeletionComplete;
-    }
-
-    public class UserDeletionCompleteMessage
-    {
-        public long UserId { get; set; }
-        
-        public string Email { get; set; }
     }
 }

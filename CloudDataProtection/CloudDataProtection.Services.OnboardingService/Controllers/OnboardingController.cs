@@ -8,7 +8,6 @@ using CloudDataProtection.Core.Rest.Errors;
 using CloudDataProtection.Core.Result;
 using CloudDataProtection.Services.Onboarding.Business;
 using CloudDataProtection.Services.Onboarding.Config;
-using CloudDataProtection.Services.Onboarding.Controllers.Dto;
 using CloudDataProtection.Services.Onboarding.Controllers.Dto.Output;
 using CloudDataProtection.Services.Onboarding.Entities;
 using CloudDataProtection.Services.Onboarding.Messaging.Client.Dto;
@@ -27,7 +26,7 @@ namespace CloudDataProtection.Services.Onboarding.Controllers
         private readonly Lazy<OnboardingBusinessLogic> _logic;
         private readonly IMapper _mapper;
         private readonly OnboardingOptions _options;
-        private readonly Lazy<IMessagePublisher<GoogleAccountConnectedModel>> _messagePublisher;
+        private readonly Lazy<IMessagePublisher<GoogleAccountConnectedMessage>> _messagePublisher;
         private readonly Lazy<IRpcClient<GetUserEmailRpcInput, GetUserEmailRpcOutput>> _getUserEmailClient;
 
         public OnboardingController(
@@ -35,7 +34,7 @@ namespace CloudDataProtection.Services.Onboarding.Controllers
             IJwtDecoder jwtDecoder, 
             IMapper mapper, 
             IOptions<OnboardingOptions> options, 
-            Lazy<IMessagePublisher<GoogleAccountConnectedModel>> messagePublisher, 
+            Lazy<IMessagePublisher<GoogleAccountConnectedMessage>> messagePublisher, 
             Lazy<IRpcClient<GetUserEmailRpcInput, GetUserEmailRpcOutput>> getUserEmailClient) : base(jwtDecoder)
         {
             _logic = logic;
@@ -100,9 +99,9 @@ namespace CloudDataProtection.Services.Onboarding.Controllers
 
             GetUserEmailRpcOutput response = await _getUserEmailClient.Value.Request(input);
 
-            GoogleAccountConnectedModel model = new GoogleAccountConnectedModel(userId, response.Email);
+            GoogleAccountConnectedMessage message = new GoogleAccountConnectedMessage(userId, response.Email);
 
-            await _messagePublisher.Value.Send(model);
+            await _messagePublisher.Value.Send(message);
             
             return Redirect(_options.RedirectUri);
         }

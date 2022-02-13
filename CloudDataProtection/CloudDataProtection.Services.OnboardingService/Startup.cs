@@ -1,15 +1,10 @@
-using System.Security.Claims;
 using AutoMapper;
-using CloudDataProtection.Core.Controllers.Data;
 using CloudDataProtection.Core.Cryptography.Generator;
 using CloudDataProtection.Core.DependencyInjection.Extensions;
-using CloudDataProtection.Core.Jwt;
-using CloudDataProtection.Core.Jwt.Options;
 using CloudDataProtection.Core.Messaging;
 using CloudDataProtection.Core.Messaging.RabbitMq;
 using CloudDataProtection.Services.Onboarding.Business;
 using CloudDataProtection.Services.Onboarding.Config;
-using CloudDataProtection.Services.Onboarding.Controllers.Dto;
 using CloudDataProtection.Services.Onboarding.Controllers.Dto.Output;
 using CloudDataProtection.Services.Onboarding.Data.Context;
 using CloudDataProtection.Services.Onboarding.Data.Repository;
@@ -21,15 +16,12 @@ using CloudDataProtection.Services.Onboarding.Messaging.Client.Dto;
 using CloudDataProtection.Services.Onboarding.Messaging.Listener;
 using CloudDataProtection.Services.Onboarding.Messaging.Publisher;
 using CloudDataProtection.Services.Onboarding.Messaging.Publisher.Dto;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
 namespace CloudDataProtection.Services.Onboarding
@@ -60,7 +52,7 @@ namespace CloudDataProtection.Services.Onboarding
             services.AddScoped<IGoogleLoginTokenRepository, LoginTokenRepository>();
 
             services.AddLazy<IRpcClient<GetUserEmailRpcInput, GetUserEmailRpcOutput>, GetUserEmailRpcClient>();
-            services.AddLazy<IMessagePublisher<GoogleAccountConnectedModel>, GoogleAccountConnectedMessagePublisher>();
+            services.AddLazy<IMessagePublisher<GoogleAccountConnectedMessage>, GoogleAccountConnectedMessagePublisher>();
             
             services.Configure<GoogleOAuthV2Options>(options => Configuration.GetSection("Google:OAuth2").Bind(options));
             
@@ -70,7 +62,7 @@ namespace CloudDataProtection.Services.Onboarding
             services.AddLazy<OnboardingBusinessLogic>();
             
             services.AddLazy<IRpcClient<GetUserEmailRpcInput, GetUserEmailRpcOutput>, GetUserEmailRpcClient>();
-            services.AddLazy<IMessagePublisher<UserDataDeletedModel>, UserDataDeletedMessagePublisher>();
+            services.AddLazy<IMessagePublisher<UserDataDeletedMessage>, UserDataDeletedMessagePublisher>();
             
             services.Configure<RabbitMqConfiguration>(options => Configuration.GetSection("RabbitMq").Bind(options));
             services.Configure<OnboardingOptions>(options => Configuration.GetSection("Google:Onboarding").Bind(options));

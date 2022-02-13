@@ -100,19 +100,19 @@ namespace CloudDataProtection.Functions.BackupDemo.Business
             return BusinessResult<File>.Ok(file);
         }
 
-        public async Task<BusinessResult<FileDownloadOutput>> Download(Guid id)
+        public async Task<BusinessResult<FileDownloadInfo>> Download(Guid id)
         {
             BusinessResult<File> result = await Get(id);
             
             if (!result.Success)
             {
-                return BusinessResult<FileDownloadOutput>.Error("An unknown error occured while retrieving info of the file");
+                return BusinessResult<FileDownloadInfo>.Error("An unknown error occured while retrieving info of the file");
             }
             
             return await Download(result.Data);
         }
 
-        private async Task<BusinessResult<FileDownloadOutput>> Download(File file)
+        private async Task<BusinessResult<FileDownloadInfo>> Download(File file)
         {
             bool downloaded = false;
             byte[] data = Array.Empty<byte>();
@@ -150,10 +150,10 @@ namespace CloudDataProtection.Functions.BackupDemo.Business
 
             if (!downloaded)
             {
-                return BusinessResult<FileDownloadOutput>.Error("An unknown error occured while attempting to download the file");
+                return BusinessResult<FileDownloadInfo>.Error("An unknown error occured while attempting to download the file");
             }
             
-            FileDownloadOutput output = new()
+            FileDownloadInfo downloadInfo = new()
             {
                 Bytes = data,
                 FileName = file.DisplayName,
@@ -161,7 +161,7 @@ namespace CloudDataProtection.Functions.BackupDemo.Business
                 DownloadedFrom = downloadedFrom
             };
             
-            return BusinessResult<FileDownloadOutput>.Ok(output);
+            return BusinessResult<FileDownloadInfo>.Ok(downloadInfo);
         }
 
         private string GenerateFileName()
