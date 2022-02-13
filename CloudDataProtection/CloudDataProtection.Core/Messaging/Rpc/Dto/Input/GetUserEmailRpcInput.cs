@@ -1,4 +1,4 @@
-namespace CloudDataProtection.Services.Onboarding.Messaging.Client.Dto
+namespace CloudDataProtection.Core.Messaging.Rpc.Dto.Input
 {
     public class GetUserEmailRpcInput
     {

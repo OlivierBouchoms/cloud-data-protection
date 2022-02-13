@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CloudDataProtection.Services.MailService.Messaging.Dto
+namespace CloudDataProtection.Core.Messaging.Dto
 {
     public class EmailChangeRequestedMessage
     {

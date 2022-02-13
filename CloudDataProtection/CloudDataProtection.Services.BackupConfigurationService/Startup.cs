@@ -1,13 +1,13 @@
 using AutoMapper;
 using CloudDataProtection.Core.DependencyInjection.Extensions;
 using CloudDataProtection.Core.Messaging;
+using CloudDataProtection.Core.Messaging.Dto;
 using CloudDataProtection.Core.Messaging.RabbitMq;
 using CloudDataProtection.Services.Subscription.Business;
 using CloudDataProtection.Services.Subscription.Controllers.Dto.Output;
 using CloudDataProtection.Services.Subscription.Data.Context;
 using CloudDataProtection.Services.Subscription.Data.Repository;
 using CloudDataProtection.Services.Subscription.Entities;
-using CloudDataProtection.Services.Subscription.Messaging.Dto;
 using CloudDataProtection.Services.Subscription.Messaging.Listener;
 using CloudDataProtection.Services.Subscription.Messaging.Publisher;
 using Microsoft.AspNetCore.Builder;

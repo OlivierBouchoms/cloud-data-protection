@@ -6,12 +6,12 @@ using CloudDataProtection.Core.DependencyInjection.Extensions;
 using CloudDataProtection.Core.Jwt;
 using CloudDataProtection.Core.Jwt.Options;
 using CloudDataProtection.Core.Messaging;
+using CloudDataProtection.Core.Messaging.Dto;
 using CloudDataProtection.Core.Messaging.RabbitMq;
 using CloudDataProtection.Data;
 using CloudDataProtection.Data.Context;
 using CloudDataProtection.Email;
 using CloudDataProtection.Jwt;
-using CloudDataProtection.Messaging.Dto;
 using CloudDataProtection.Messaging.Listener;
 using CloudDataProtection.Messaging.Publisher;
 using CloudDataProtection.Messaging.Server;
@@ -30,6 +30,8 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
+using EmailChangeRequestedMessage = CloudDataProtection.Messaging.Publisher.EmailChangeRequestedMessage;
+using UserDeletedMessage = CloudDataProtection.Messaging.Publisher.UserDeletedMessage;
 
 namespace CloudDataProtection
 {

@@ -2,9 +2,10 @@
 using CloudDataProtection.Business;
 using CloudDataProtection.Core.Messaging.RabbitMq;
 using CloudDataProtection.Core.Messaging.Rpc;
+using CloudDataProtection.Core.Messaging.Rpc.Dto.Input;
+using CloudDataProtection.Core.Messaging.Rpc.Dto.Output;
 using CloudDataProtection.Core.Result;
 using CloudDataProtection.Entities;
-using CloudDataProtection.Messaging.Server.Dto;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;

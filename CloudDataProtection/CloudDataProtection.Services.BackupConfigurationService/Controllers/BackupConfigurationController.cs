@@ -4,13 +4,13 @@ using AutoMapper;
 using CloudDataProtection.Core.Controllers;
 using CloudDataProtection.Core.Jwt;
 using CloudDataProtection.Core.Messaging;
+using CloudDataProtection.Core.Messaging.Dto;
 using CloudDataProtection.Core.Rest.Errors;
 using CloudDataProtection.Core.Result;
 using CloudDataProtection.Services.Subscription.Business;
 using CloudDataProtection.Services.Subscription.Controllers.Dto.Input;
 using CloudDataProtection.Services.Subscription.Controllers.Dto.Output;
 using CloudDataProtection.Services.Subscription.Entities;
-using CloudDataProtection.Services.Subscription.Messaging.Dto;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

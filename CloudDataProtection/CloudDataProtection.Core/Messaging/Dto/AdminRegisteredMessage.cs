@@ -1,6 +1,6 @@
 using System;
 
-namespace CloudDataProtection.Messaging.Dto
+namespace CloudDataProtection.Core.Messaging.Dto
 {
     public class AdminRegisteredMessage
     {

@@ -4,11 +4,11 @@ using CloudDataProtection.Business;
 using CloudDataProtection.Controllers.Dto.Input;
 using CloudDataProtection.Controllers.Dto.Output;
 using CloudDataProtection.Core.Messaging;
+using CloudDataProtection.Core.Messaging.Dto;
 using CloudDataProtection.Core.Rest.Errors;
 using CloudDataProtection.Core.Result;
 using CloudDataProtection.Entities;
 using CloudDataProtection.Jwt;
-using CloudDataProtection.Messaging.Dto;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

@@ -1,5 +1,6 @@
 ﻿using CloudDataProtection.Core.Messaging.RabbitMq;
-using CloudDataProtection.Services.Onboarding.Messaging.Client.Dto;
+using CloudDataProtection.Core.Messaging.Rpc.Dto.Input;
+using CloudDataProtection.Core.Messaging.Rpc.Dto.Output;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 

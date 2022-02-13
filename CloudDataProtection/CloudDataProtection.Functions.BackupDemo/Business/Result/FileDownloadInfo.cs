@@ -1,6 +1,6 @@
 ﻿using CloudDataProtection.Functions.BackupDemo.Entities;
 
-namespace CloudDataProtection.Functions.BackupDemo.Triggers.Dto.Output
+namespace CloudDataProtection.Functions.BackupDemo.Business.Result
 {
     public class FileDownloadInfo
     {

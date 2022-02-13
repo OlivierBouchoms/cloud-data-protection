@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
 using CloudDataProtection.Core.Messaging;
+using CloudDataProtection.Core.Messaging.Dto;
 using CloudDataProtection.Core.Messaging.RabbitMq;
 using CloudDataProtection.Services.Onboarding.Business;
-using CloudDataProtection.Services.Onboarding.Messaging.Publisher.Dto;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;

@@ -6,12 +6,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using CloudDataProtection.Core.Cryptography.Aes;
 using CloudDataProtection.Core.Result;
+using CloudDataProtection.Functions.BackupDemo.Business.Result;
 using CloudDataProtection.Functions.BackupDemo.Entities;
 using CloudDataProtection.Functions.BackupDemo.Extensions;
 using CloudDataProtection.Functions.BackupDemo.Repository;
 using CloudDataProtection.Functions.BackupDemo.Service;
 using CloudDataProtection.Functions.BackupDemo.Service.Result;
-using CloudDataProtection.Functions.BackupDemo.Triggers.Dto.Output;
 using Microsoft.AspNetCore.Http;
 using File = CloudDataProtection.Functions.BackupDemo.Entities.File;
 

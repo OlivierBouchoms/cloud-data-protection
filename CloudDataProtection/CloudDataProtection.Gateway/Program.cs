@@ -28,7 +28,7 @@ namespace CloudDataProtection
             return builder
                 .ConfigureServices(s => s.AddSingleton(builder))
                 .ConfigureAppConfiguration((context, config) => config.AddJsonFile($"ocelot.{context.HostingEnvironment.EnvironmentName}.json"))
-                .ConfigureLogging(loggingBuilder => loggingBuilder.ConfigureLogging())
+                .ConfigureLogging(loggingBuilder => loggingBuilder.AddPapertrail())
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();

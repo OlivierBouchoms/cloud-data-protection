@@ -4,9 +4,9 @@ using System.Threading.Tasks;
 using CloudDataProtection.Business;
 using CloudDataProtection.Business.Options;
 using CloudDataProtection.Core.Messaging;
+using CloudDataProtection.Core.Messaging.Dto;
 using CloudDataProtection.Core.Result;
 using CloudDataProtection.Entities;
-using CloudDataProtection.Messaging.Dto;
 using Microsoft.Extensions.Options;
 
 namespace CloudDataProtection.Seeder

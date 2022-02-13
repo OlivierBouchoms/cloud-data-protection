@@ -7,14 +7,15 @@ using CloudDataProtection.Controllers.Dto.Output;
 using CloudDataProtection.Core.Controllers;
 using CloudDataProtection.Core.Jwt;
 using CloudDataProtection.Core.Messaging;
+using CloudDataProtection.Core.Messaging.Dto;
 using CloudDataProtection.Core.Rest.Errors;
 using CloudDataProtection.Core.Result;
 using CloudDataProtection.Entities;
-using CloudDataProtection.Messaging.Dto;
-using CloudDataProtection.Messaging.Publisher;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using EmailChangeRequestedMessage = CloudDataProtection.Messaging.Publisher.EmailChangeRequestedMessage;
+using UserDeletedMessage = CloudDataProtection.Messaging.Publisher.UserDeletedMessage;
 
 namespace CloudDataProtection.Controllers
 {

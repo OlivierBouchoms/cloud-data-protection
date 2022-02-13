@@ -4,14 +4,15 @@ using AutoMapper;
 using CloudDataProtection.Core.Controllers;
 using CloudDataProtection.Core.Jwt;
 using CloudDataProtection.Core.Messaging;
+using CloudDataProtection.Core.Messaging.Dto;
+using CloudDataProtection.Core.Messaging.Rpc.Dto.Input;
+using CloudDataProtection.Core.Messaging.Rpc.Dto.Output;
 using CloudDataProtection.Core.Rest.Errors;
 using CloudDataProtection.Core.Result;
 using CloudDataProtection.Services.Onboarding.Business;
 using CloudDataProtection.Services.Onboarding.Config;
 using CloudDataProtection.Services.Onboarding.Controllers.Dto.Output;
 using CloudDataProtection.Services.Onboarding.Entities;
-using CloudDataProtection.Services.Onboarding.Messaging.Client.Dto;
-using CloudDataProtection.Services.Onboarding.Messaging.Publisher.Dto;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -99,7 +100,11 @@ namespace CloudDataProtection.Services.Onboarding.Controllers
 
             GetUserEmailRpcOutput response = await _getUserEmailClient.Value.Request(input);
 
-            GoogleAccountConnectedMessage message = new GoogleAccountConnectedMessage(userId, response.Email);
+            GoogleAccountConnectedMessage message = new GoogleAccountConnectedMessage
+            {
+                UserId = userId,
+                Email = response.Email
+            };
 
             await _messagePublisher.Value.Send(message);
             

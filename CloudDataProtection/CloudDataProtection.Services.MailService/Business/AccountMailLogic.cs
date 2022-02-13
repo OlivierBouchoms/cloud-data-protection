@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
+using CloudDataProtection.Core.Messaging.Dto;
 using CloudDataProtection.Services.MailService.Business.Base;
-using CloudDataProtection.Services.MailService.Messaging.Dto;
 using CloudDataProtection.Services.MailService.Sender;
 
 namespace CloudDataProtection.Services.MailService.Business

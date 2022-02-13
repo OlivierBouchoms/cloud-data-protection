@@ -1,8 +1,8 @@
 using System.Threading.Tasks;
 using CloudDataProtection.Core.Messaging;
+using CloudDataProtection.Core.Messaging.Dto;
 using CloudDataProtection.Core.Messaging.RabbitMq;
 using CloudDataProtection.Services.MailService.Business;
-using CloudDataProtection.Services.MailService.Messaging.Dto;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 

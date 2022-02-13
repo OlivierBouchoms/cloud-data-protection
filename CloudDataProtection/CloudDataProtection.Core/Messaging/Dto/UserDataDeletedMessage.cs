@@ -1,6 +1,6 @@
-﻿using System;
+using System;
 
-namespace CloudDataProtection.Services.Onboarding.Messaging.Publisher.Dto
+namespace CloudDataProtection.Core.Messaging.Dto
 {
     public class UserDataDeletedMessage
     {
@@ -10,6 +10,6 @@ namespace CloudDataProtection.Services.Onboarding.Messaging.Publisher.Dto
         
         public DateTime CompletedAt { get; set; }
 
-        public string Service => "Onboarding";
+        public string Service { get; set; }
     }
 }
