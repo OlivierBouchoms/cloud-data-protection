@@ -8,7 +8,8 @@ using CloudDataProtection.Core.Rest.Errors;
 using CloudDataProtection.Core.Result;
 using CloudDataProtection.Services.Onboarding.Business;
 using CloudDataProtection.Services.Onboarding.Config;
-using CloudDataProtection.Services.Onboarding.Dto;
+using CloudDataProtection.Services.Onboarding.Controllers.Dto;
+using CloudDataProtection.Services.Onboarding.Controllers.Dto.Output;
 using CloudDataProtection.Services.Onboarding.Entities;
 using CloudDataProtection.Services.Onboarding.Messaging.Client.Dto;
 using CloudDataProtection.Services.Onboarding.Messaging.Publisher.Dto;
@@ -55,7 +56,7 @@ namespace CloudDataProtection.Services.Onboarding.Controllers
                 return NotFound(NotFoundResponse.Create("User", UserId));
             }
 
-            OnboardingResult result = _mapper.Map<OnboardingResult>(businessResult.Data);
+            OnboardingOutput output = _mapper.Map<OnboardingOutput>(businessResult.Data);
 
             if (businessResult.Data.Status == OnboardingStatus.None)
             {
@@ -66,10 +67,10 @@ namespace CloudDataProtection.Services.Onboarding.Controllers
                     return Problem(loginInfoBusinessResult.Message);
                 }
                 
-                result.LoginInfo = _mapper.Map<GoogleLoginInfoResult>(loginInfoBusinessResult.Data);
+                output.LoginInfo = _mapper.Map<GoogleLoginInfoOutput>(loginInfoBusinessResult.Data);
             }
 
-            return Ok(result);
+            return Ok(output);
         }
 
         [HttpGet]

@@ -19,6 +19,7 @@ namespace CloudDataProtection.Core.Rest.Errors
             return new NotFoundResponse(message);
         }
         
+        [Obsolete]
         private static NotFoundResponse Create(Type type, object id, CrudAction action)
         {
             string message = $"Could not {action.ToString().ToLower()} {type.Name.ToLower()} with id = {id}";

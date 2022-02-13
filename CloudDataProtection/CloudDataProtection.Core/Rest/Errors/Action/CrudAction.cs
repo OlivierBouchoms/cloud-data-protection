@@ -1,5 +1,8 @@
-﻿namespace CloudDataProtection.Core.Rest.Errors.Action
+﻿using System;
+
+namespace CloudDataProtection.Core.Rest.Errors.Action
 {
+    [Obsolete]
     public enum CrudAction
     {
         Create = 0,

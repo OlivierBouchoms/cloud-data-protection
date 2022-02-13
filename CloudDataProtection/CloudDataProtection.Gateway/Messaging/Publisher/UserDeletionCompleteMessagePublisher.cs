@@ -5,7 +5,7 @@ using Microsoft.Extensions.Options;
 
 namespace CloudDataProtection.Messaging.Publisher
 {
-    public class UserDeletionCompleteMessagePublisher : RabbitMqMessagePublisher<UserDeletionCompleteModel>
+    public class UserDeletionCompleteMessagePublisher : RabbitMqMessagePublisher<UserDeletionCompleteMessage>
     {
         public UserDeletionCompleteMessagePublisher(IOptions<RabbitMqConfiguration> options, ILogger<UserDeletionCompleteMessagePublisher> logger) : base(options, logger)
         {
@@ -14,7 +14,7 @@ namespace CloudDataProtection.Messaging.Publisher
         protected override string RoutingKey => RoutingKeys.ClientDeletionComplete;
     }
 
-    public class UserDeletionCompleteModel
+    public class UserDeletionCompleteMessage
     {
         public long UserId { get; set; }
         

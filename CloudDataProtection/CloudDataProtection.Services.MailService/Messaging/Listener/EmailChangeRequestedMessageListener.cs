@@ -2,13 +2,13 @@
 using CloudDataProtection.Core.Messaging;
 using CloudDataProtection.Core.Messaging.RabbitMq;
 using CloudDataProtection.Services.MailService.Business;
-using CloudDataProtection.Services.MailService.Dto;
+using CloudDataProtection.Services.MailService.Messaging.Dto;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace CloudDataProtection.Services.MailService.Messaging.Listener
 {
-    public class EmailChangeRequestedMessageListener : RabbitMqMessageListener<EmailChangeRequestedModel>
+    public class EmailChangeRequestedMessageListener : RabbitMqMessageListener<EmailChangeRequestedMessage>
     {
         private readonly AccountMailLogic _logic;
 
@@ -19,9 +19,9 @@ namespace CloudDataProtection.Services.MailService.Messaging.Listener
 
         protected override string RoutingKey => RoutingKeys.EmailChangeRequested;
         
-        public override async Task HandleMessage(EmailChangeRequestedModel model)
+        public override async Task HandleMessage(EmailChangeRequestedMessage message)
         {
-            await _logic.SendEmailChangeRequested(model.NewEmail, model.Url, model.ExpiresAt);
+            await _logic.SendEmailChangeRequested(message.NewEmail, message.Url, message.ExpiresAt);
         }
     }
 }

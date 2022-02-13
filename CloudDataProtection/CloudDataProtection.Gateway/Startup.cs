@@ -11,9 +11,9 @@ using CloudDataProtection.Core.Messaging;
 using CloudDataProtection.Core.Messaging.RabbitMq;
 using CloudDataProtection.Data;
 using CloudDataProtection.Data.Context;
-using CloudDataProtection.Dto.Result;
 using CloudDataProtection.Email;
 using CloudDataProtection.Jwt;
+using CloudDataProtection.Messaging.Dto;
 using CloudDataProtection.Messaging.Listener;
 using CloudDataProtection.Messaging.Publisher;
 using CloudDataProtection.Messaging.Server;
@@ -71,12 +71,12 @@ namespace CloudDataProtection
 
             ConfigureAuthentication(services);
             
-            services.AddLazy<IMessagePublisher<AdminRegisteredModel>, AdminRegisteredMessagePublisher>();
-            services.AddLazy<IMessagePublisher<ClientResult>, ClientRegisteredMessagePublisher>();
-            services.AddLazy<IMessagePublisher<PasswordUpdatedModel>, PasswordUpdatedMessagePublisher>();
-            services.AddLazy<IMessagePublisher<UserDeletedModel>, UserDeletedMessagePublisher>();
-            services.AddLazy<IMessagePublisher<UserDeletionCompleteModel>, UserDeletionCompleteMessagePublisher>();
-            services.AddLazy<IMessagePublisher<EmailChangeRequestedModel>, EmailChangeRequestedMessagePublisher>();
+            services.AddLazy<IMessagePublisher<AdminRegisteredMessage>, AdminRegisteredMessagePublisher>();
+            services.AddLazy<IMessagePublisher<ClientRegisteredMessage>, ClientRegisteredMessagePublisher>();
+            services.AddLazy<IMessagePublisher<PasswordUpdatedMessage>, PasswordUpdatedMessagePublisher>();
+            services.AddLazy<IMessagePublisher<UserDeletedMessage>, UserDeletedMessagePublisher>();
+            services.AddLazy<IMessagePublisher<UserDeletionCompleteMessage>, UserDeletionCompleteMessagePublisher>();
+            services.AddLazy<IMessagePublisher<EmailChangeRequestedMessage>, EmailChangeRequestedMessagePublisher>();
             
             services.AddSingleton<ITokenGenerator, OtpGenerator>();
 

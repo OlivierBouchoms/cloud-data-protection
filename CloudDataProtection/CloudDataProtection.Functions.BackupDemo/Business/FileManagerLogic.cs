@@ -11,7 +11,7 @@ using CloudDataProtection.Functions.BackupDemo.Extensions;
 using CloudDataProtection.Functions.BackupDemo.Repository;
 using CloudDataProtection.Functions.BackupDemo.Service;
 using CloudDataProtection.Functions.BackupDemo.Service.Result;
-using CloudDataProtection.Functions.BackupDemo.Triggers.Dto.Result;
+using CloudDataProtection.Functions.BackupDemo.Triggers.Dto.Output;
 using Microsoft.AspNetCore.Http;
 using File = CloudDataProtection.Functions.BackupDemo.Entities.File;
 
@@ -100,19 +100,19 @@ namespace CloudDataProtection.Functions.BackupDemo.Business
             return BusinessResult<File>.Ok(file);
         }
 
-        public async Task<BusinessResult<FileDownloadResult>> Download(Guid id)
+        public async Task<BusinessResult<FileDownloadOutput>> Download(Guid id)
         {
             BusinessResult<File> result = await Get(id);
             
             if (!result.Success)
             {
-                return BusinessResult<FileDownloadResult>.Error("An unknown error occured while retrieving info of the file");
+                return BusinessResult<FileDownloadOutput>.Error("An unknown error occured while retrieving info of the file");
             }
             
             return await Download(result.Data);
         }
 
-        private async Task<BusinessResult<FileDownloadResult>> Download(File file)
+        private async Task<BusinessResult<FileDownloadOutput>> Download(File file)
         {
             bool downloaded = false;
             byte[] data = Array.Empty<byte>();
@@ -150,10 +150,10 @@ namespace CloudDataProtection.Functions.BackupDemo.Business
 
             if (!downloaded)
             {
-                return BusinessResult<FileDownloadResult>.Error("An unknown error occured while attempting to download the file");
+                return BusinessResult<FileDownloadOutput>.Error("An unknown error occured while attempting to download the file");
             }
             
-            FileDownloadResult result = new()
+            FileDownloadOutput output = new()
             {
                 Bytes = data,
                 FileName = file.DisplayName,
@@ -161,7 +161,7 @@ namespace CloudDataProtection.Functions.BackupDemo.Business
                 DownloadedFrom = downloadedFrom
             };
             
-            return BusinessResult<FileDownloadResult>.Ok(result);
+            return BusinessResult<FileDownloadOutput>.Ok(output);
         }
 
         private string GenerateFileName()

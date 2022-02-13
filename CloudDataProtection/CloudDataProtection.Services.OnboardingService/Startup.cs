@@ -9,9 +9,10 @@ using CloudDataProtection.Core.Messaging;
 using CloudDataProtection.Core.Messaging.RabbitMq;
 using CloudDataProtection.Services.Onboarding.Business;
 using CloudDataProtection.Services.Onboarding.Config;
+using CloudDataProtection.Services.Onboarding.Controllers.Dto;
+using CloudDataProtection.Services.Onboarding.Controllers.Dto.Output;
 using CloudDataProtection.Services.Onboarding.Data.Context;
 using CloudDataProtection.Services.Onboarding.Data.Repository;
-using CloudDataProtection.Services.Onboarding.Dto;
 using CloudDataProtection.Services.Onboarding.Entities;
 using CloudDataProtection.Services.Onboarding.Google.Credentials;
 using CloudDataProtection.Services.Onboarding.Google.Options;
@@ -101,10 +102,10 @@ namespace CloudDataProtection.Services.Onboarding
 
         private void ConfigureMapper(IMapperConfigurationExpression config)
         {
-            config.CreateMap<Entities.Onboarding, OnboardingResult>()
+            config.CreateMap<Entities.Onboarding, OnboardingOutput>()
                 .ForMember(m => m.LoginInfo, options => options.Ignore());
 
-            config.CreateMap<GoogleLoginInfo, GoogleLoginInfoResult>();
+            config.CreateMap<GoogleLoginInfo, GoogleLoginInfoOutput>();
         }
 
         private void ConfigureAuthentication(IServiceCollection services)

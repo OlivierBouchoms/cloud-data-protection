@@ -6,7 +6,7 @@ using CloudDataProtection.Functions.BackupDemo.Authentication;
 using CloudDataProtection.Functions.BackupDemo.Business;
 using CloudDataProtection.Functions.BackupDemo.Extensions;
 using CloudDataProtection.Functions.BackupDemo.Factory;
-using CloudDataProtection.Functions.BackupDemo.Triggers.Dto.Result;
+using CloudDataProtection.Functions.BackupDemo.Triggers.Dto.Output;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
@@ -49,7 +49,7 @@ namespace CloudDataProtection.Functions.BackupDemo.Triggers
         {
             FileManagerLogic logic = FileManagerLogicFactory.Instance.GetLogic();
 
-            BusinessResult<FileDownloadResult> result = await logic.Download(id);
+            BusinessResult<FileDownloadOutput> result = await logic.Download(id);
 
             if (!result.Success || !result.Data.DownloadedFrom.HasValue)
             {
