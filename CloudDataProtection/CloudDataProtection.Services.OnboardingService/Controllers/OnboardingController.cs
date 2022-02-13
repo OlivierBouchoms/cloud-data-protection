@@ -27,7 +27,7 @@ namespace CloudDataProtection.Services.Onboarding.Controllers
         private readonly IMapper _mapper;
         private readonly OnboardingOptions _options;
         private readonly Lazy<IMessagePublisher<GoogleAccountConnectedModel>> _messagePublisher;
-        private readonly Lazy<IRpcClient<GetUserEmailInput, GetUserEmailOutput>> _getUserEmailClient;
+        private readonly Lazy<IRpcClient<GetUserEmailRpcInput, GetUserEmailRpcOutput>> _getUserEmailClient;
 
         public OnboardingController(
             Lazy<OnboardingBusinessLogic> logic, 
@@ -35,7 +35,7 @@ namespace CloudDataProtection.Services.Onboarding.Controllers
             IMapper mapper, 
             IOptions<OnboardingOptions> options, 
             Lazy<IMessagePublisher<GoogleAccountConnectedModel>> messagePublisher, 
-            Lazy<IRpcClient<GetUserEmailInput, GetUserEmailOutput>> getUserEmailClient) : base(jwtDecoder)
+            Lazy<IRpcClient<GetUserEmailRpcInput, GetUserEmailRpcOutput>> getUserEmailClient) : base(jwtDecoder)
         {
             _logic = logic;
             _mapper = mapper;
@@ -95,9 +95,9 @@ namespace CloudDataProtection.Services.Onboarding.Controllers
 
             long userId = businessResult.Data.UserId;
 
-            GetUserEmailInput input = new GetUserEmailInput(userId);
+            GetUserEmailRpcInput input = new GetUserEmailRpcInput(userId);
 
-            GetUserEmailOutput response = await _getUserEmailClient.Value.Request(input);
+            GetUserEmailRpcOutput response = await _getUserEmailClient.Value.Request(input);
 
             GoogleAccountConnectedModel model = new GoogleAccountConnectedModel(userId, response.Email);
 

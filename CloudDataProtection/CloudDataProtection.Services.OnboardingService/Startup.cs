@@ -58,7 +58,7 @@ namespace CloudDataProtection.Services.Onboarding
             services.AddScoped<IGoogleCredentialsRepository, GoogleCredentialsRepository>();
             services.AddScoped<IGoogleLoginTokenRepository, LoginTokenRepository>();
 
-            services.AddLazy<IRpcClient<GetUserEmailInput, GetUserEmailOutput>, GetUserEmailRpcClient>();
+            services.AddLazy<IRpcClient<GetUserEmailRpcInput, GetUserEmailRpcOutput>, GetUserEmailRpcClient>();
             services.AddLazy<IMessagePublisher<GoogleAccountConnectedModel>, GoogleAccountConnectedMessagePublisher>();
             
             services.Configure<GoogleOAuthV2Options>(options => Configuration.GetSection("Google:OAuth2").Bind(options));
@@ -68,7 +68,7 @@ namespace CloudDataProtection.Services.Onboarding
             
             services.AddLazy<OnboardingBusinessLogic>();
             
-            services.AddLazy<IRpcClient<GetUserEmailInput, GetUserEmailOutput>, GetUserEmailRpcClient>();
+            services.AddLazy<IRpcClient<GetUserEmailRpcInput, GetUserEmailRpcOutput>, GetUserEmailRpcClient>();
             services.AddLazy<IMessagePublisher<UserDataDeletedModel>, UserDataDeletedMessagePublisher>();
             
             services.Configure<RabbitMqConfiguration>(options => Configuration.GetSection("RabbitMq").Bind(options));

@@ -1,10 +1,10 @@
 namespace CloudDataProtection.Services.Onboarding.Messaging.Client.Dto
 {
-    public class GetUserEmailInput
+    public class GetUserEmailRpcInput
     {
         public long UserId { get; }
 
-        public GetUserEmailInput(long userId)
+        public GetUserEmailRpcInput(long userId)
         {
             UserId = userId;
         }
