@@ -1,17 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using CloudDataProtection.Core.Cryptography.Aes;
+using CloudDataProtection.Core.Cryptography.Checksum;
 using CloudDataProtection.Core.Result;
 using CloudDataProtection.Functions.BackupDemo.Business.Result;
 using CloudDataProtection.Functions.BackupDemo.Entities;
 using CloudDataProtection.Functions.BackupDemo.Extensions;
 using CloudDataProtection.Functions.BackupDemo.Repository;
 using CloudDataProtection.Functions.BackupDemo.Service;
-using CloudDataProtection.Functions.BackupDemo.Service.Result;
+using CloudDataProtection.Functions.BackupDemo.Service.Scan;
 using Microsoft.AspNetCore.Http;
 using File = CloudDataProtection.Functions.BackupDemo.Entities.File;
 
@@ -21,71 +23,133 @@ namespace CloudDataProtection.Functions.BackupDemo.Business
     {
         private readonly IDataTransformer _transformer;
         private readonly IFileRepository _repository;
+        private readonly IFileScanService _fileScanService;
+        private readonly IChecksumCalculator _checksumCalculator;
         private readonly IEnumerable<IFileService> _fileServices;
 
         public IEnumerable<IFileService> FileServices => _fileServices.ToImmutableList();
 
-        public FileManagerLogic(IEnumerable<IFileService> fileServices, 
+        public FileManagerLogic(IEnumerable<IFileService> fileServices,
             IDataTransformer transformer,
-            IFileRepository repository)
+            IFileRepository repository,
+            IFileScanService fileScanService,
+            IChecksumCalculator checksumCalculator)
         {
             _fileServices = fileServices;
             _transformer = transformer;
             _repository = repository;
+            _fileScanService = fileScanService;
+            _checksumCalculator = checksumCalculator;
         }
 
-        public async Task<BusinessResult<File>> Upload(IFormFile input, ICollection<FileDestination> destinations)
+        public async Task<BusinessResult<File>> Upload(IFormFile input, ICollection<FileDestination> destinations, bool runScan)
         {
             string fileName = GenerateFileName();
-            
-            using (Stream stream = _transformer.Encrypt(input.OpenReadStream()))
+
+            using (Stream inputStream = input.OpenReadStream())
             {
-                File file = new()
+                using (Stream encryptedStream = _transformer.Encrypt(inputStream))
                 {
-                    ContentType = input.ContentType,
-                    DisplayName = input.FileName,
-                    Bytes = input.Length
-                };
-                
-                foreach (FileDestination destination in destinations)
-                {
-                    IFileService fileService = ResolveFileService(destination);
-
-                    if (fileService == null)
+                    inputStream.Position = 0;
+                    
+                    File file = new()
                     {
-                        continue;
+                        ContentType = input.ContentType,
+                        DisplayName = input.FileName,
+                        Bytes = input.Length,
+                        ChecksumAlgorithm = _checksumCalculator.Algorithm,
+                        Checksum = _checksumCalculator.Calculate(inputStream)
+                    };
+
+                    Task<GetWidgetResult> getWidgetTask = null;
+                    GetFileResult getFileResult = null;
+
+                    Task<UploadFileResult> uploadFileTask = null;
+                    Task<ReAnalyseFileResult> reAnalyseFileTask = null;
+
+                    if (runScan)
+                    {
+                        getWidgetTask = _fileScanService.GetWidget(file);
+                        getFileResult = await _fileScanService.GetFile(file);
+
+                        if (!getFileResult.FileExists)
+                        {
+                            MemoryStream scanCopy = new();
+
+                            await inputStream.CopyToAndSeekAsync(scanCopy);
+
+                            uploadFileTask = _fileScanService.UploadFile(file, scanCopy);
+                        }
+                        else
+                        {
+                            reAnalyseFileTask = _fileScanService.ReAnalyzeFile(file);
+                        }
                     }
 
-                    FileDestinationInfo info = new(destination);
-
-                    try
+                    foreach (FileDestination destination in destinations)
                     {
-                        MemoryStream copy = new();
+                        IFileService fileService = ResolveFileService(destination);
 
-                        await stream.CopyToAndSeekAsync(copy);
+                        if (fileService == null)
+                        {
+                            continue;
+                        }
 
-                        UploadFileResult fileResult = await fileService.Upload(copy, fileName);
+                        FileDestinationInfo info = new(destination);
 
-                        info.UploadCompletedAt = DateTime.Now;
-                        info.UploadSuccess = fileResult.Success;
-                        info.FileId = fileResult.Id;
+                        try
+                        {
+                            MemoryStream copy = new();
+
+                            await encryptedStream.CopyToAndSeekAsync(copy);
+
+                            Service.Result.UploadFileResult fileResult = await fileService.Upload(copy, fileName);
+
+                            info.UploadCompletedAt = DateTime.Now;
+                            info.UploadSuccess = fileResult.Success;
+                            info.FileId = fileResult.Id;
+                        }
+                        catch (Exception e)
+                        {
+                            info.UploadSuccess = false;
+                            info.FileId = null;
+                        }
+
+                        file.AddDestination(info);
                     }
-                    catch (Exception e)
+
+                    if (runScan)
                     {
-                        info.UploadSuccess = false;
-                        info.FileId = null;
+                        await getWidgetTask;
+
+                        if (uploadFileTask != null)
+                        {
+                            await uploadFileTask;
+                        }
+
+                        if (reAnalyseFileTask != null)
+                        {
+                            await reAnalyseFileTask;
+                        }
+
+                        file.ScanInfo = new()
+                        {
+                            AnalysisId = getFileResult.FileExists ? reAnalyseFileTask.Result.AnalysisId : uploadFileTask.Result.AnalysisId,
+                            ResourceUrl = getFileResult.FileExists ? getFileResult.Url : uploadFileTask.Result.Url,
+                            WidgetUrl = getWidgetTask.Result.Url,
+                            Destination = _fileScanService.Destination
+                        };
                     }
 
-                    file.AddDestination(info);
+
+                    if (file.IsUploaded)
+                    {
+                        await _repository.Create(file);
+                    }
+
+                    return BusinessResult<File>.Ok(file);
                 }
-
-                if (file.IsUploaded)
-                {
-                    await _repository.Create(file);
-                }
-
-                return BusinessResult<File>.Ok(file);
-            }      
+            }
         }
 
         public async Task<BusinessResult<File>> Get(Guid id)
@@ -96,19 +160,19 @@ namespace CloudDataProtection.Functions.BackupDemo.Business
             {
                 return BusinessResult<File>.NotFound($"Could not find file with id = {id.ToString()}");
             }
-            
+
             return BusinessResult<File>.Ok(file);
         }
 
         public async Task<BusinessResult<FileDownloadInfo>> Download(Guid id)
         {
             BusinessResult<File> result = await Get(id);
-            
+
             if (!result.Success)
             {
                 return BusinessResult<FileDownloadInfo>.Error("An unknown error occured while retrieving info of the file");
             }
-            
+
             return await Download(result.Data);
         }
 
@@ -130,9 +194,9 @@ namespace CloudDataProtection.Functions.BackupDemo.Business
                     {
                         continue;
                     }
-                    
+
                     Stream response = await fileService.GetDownloadStream(info.FileId);
-                    
+
                     data = _transformer.Decrypt(response);
                 }
                 catch (Exception e)
@@ -152,7 +216,7 @@ namespace CloudDataProtection.Functions.BackupDemo.Business
             {
                 return BusinessResult<FileDownloadInfo>.Error("An unknown error occured while attempting to download the file");
             }
-            
+
             FileDownloadInfo downloadInfo = new()
             {
                 Bytes = data,
@@ -160,7 +224,7 @@ namespace CloudDataProtection.Functions.BackupDemo.Business
                 ContentType = file.ContentType,
                 DownloadedFrom = downloadedFrom
             };
-            
+
             return BusinessResult<FileDownloadInfo>.Ok(downloadInfo);
         }
 

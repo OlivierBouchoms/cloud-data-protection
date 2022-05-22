@@ -16,6 +16,8 @@ namespace CloudDataProtection.Functions.BackupDemo.Triggers.Dto.Output
         public string ContentType { get; set; }
         
         public List<FileUploadDestinationOutputEntry> UploadedTo { get; set; }
+        
+        public FileUploadScanInfoOutput ScanInfo { get; set; }
 
         public bool HasErrors => UploadedTo.Any(u => !u.Success);
 
@@ -34,5 +36,12 @@ namespace CloudDataProtection.Functions.BackupDemo.Triggers.Dto.Output
             Description = info.Destination.GetDescription();
             Success = info.UploadSuccess;
         }
+    }
+
+    public class FileUploadScanInfoOutput
+    {
+        public string Destination { get; set; }
+        
+        public string WidgetUrl { get; set; }
     }
 }

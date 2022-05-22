@@ -14,6 +14,7 @@
 | CDP_BACKUP_DEMO_BLOB_STORAGE_CONNECTION | Azure Blob Storage connection    | Backup demo serverless function | No *     |
 | CDP_BACKUP_DEMO_GCS_PROJECT_ID          | Google Cloud Storage project id  | Backup demo serverless function | No *     |
 | CDP_BACKUP_DEMO_GCS_JSON_FILE           | Google Cloud Storage credentials | Backup demo serverless function | No *     |
+| CDP_BACKUP_DEMO_VIRUSTOTAL_KEY          | VirusTotal API key               | Backup demo serverless function | Yes      |
 | CDP_BACKUP_DEMO_SETTINGS_FILE           | Path to appsettings.json file    | Backup demo serverless function | No **    |
 | AZURE_FUNCTIONS_ENVIRONMENT             | Hosting environment              | Backup demo serverless function | Yes      |
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using CloudDataProtection.Core.Cryptography.Aes;
 using CloudDataProtection.Core.Cryptography.Aes.Options;
+using CloudDataProtection.Core.Cryptography.Checksum;
 using CloudDataProtection.Core.Environment;
 using CloudDataProtection.Functions.BackupDemo.Business;
 using CloudDataProtection.Functions.BackupDemo.Context;
@@ -11,7 +12,10 @@ using CloudDataProtection.Functions.BackupDemo.Service;
 using CloudDataProtection.Functions.BackupDemo.Service.Amazon;
 using CloudDataProtection.Functions.BackupDemo.Service.Azure;
 using CloudDataProtection.Functions.BackupDemo.Service.Google;
+using CloudDataProtection.Functions.BackupDemo.Service.Scan;
+using CloudDataProtection.Functions.BackupDemo.Service.Scan.VirusTotal;
 using CloudDataProtection.Functions.BackupDemo.Settings.App;
+using Newtonsoft.Json;
 using Environment = System.Environment;
 
 namespace CloudDataProtection.Functions.BackupDemo.Factory
@@ -57,9 +61,13 @@ namespace CloudDataProtection.Functions.BackupDemo.Factory
 
             ICollection<IFileService> fileServices = GetFileServices(_appSettings);
 
+            IFileScanService fileScanService = GetFileScanService();
+
             IDataTransformer transformer = new AesStreamTransformer(options);
 
-            return new FileManagerLogic(fileServices, transformer, repository);
+            IChecksumCalculator checksumCalculator = new Sha256ChecksumCalculator();
+
+            return new FileManagerLogic(fileServices, transformer, repository, fileScanService, checksumCalculator);
         }
 
         private void InitializeAppSettingsProvider()
@@ -94,6 +102,13 @@ namespace CloudDataProtection.Functions.BackupDemo.Factory
             fileServices.AddIf(() => new GoogleCloudStorageFileService(), settings.Gcs.IsEnabled);
 
             return fileServices;
+        }
+
+        private IFileScanService GetFileScanService()
+        {
+            string apiKey = EnvironmentVariableHelper.GetEnvironmentVariable("CDP_BACKUP_DEMO_VIRUSTOTAL_KEY");
+            
+            return new VirusTotalFileScanService(apiKey);
         }
         
         private AppSettingsSource GetAppSettingsSource()

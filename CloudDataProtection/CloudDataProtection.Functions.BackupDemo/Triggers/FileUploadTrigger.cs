@@ -45,24 +45,31 @@ namespace CloudDataProtection.Functions.BackupDemo.Triggers
         {
             FileManagerLogic logic = FileManagerLogicFactory.Instance.GetLogic();
 
-            BusinessResult<File> result = await logic.Upload(file, input.Destinations);
+            BusinessResult<File> result = await logic.Upload(file, input.Destinations, input.RunScan);
 
             if (!result.Success || result.Data == null)
             {
                 return new InternalServerErrorResult();
             }
 
+            File entity = result.Data;
+
             FileUploadOutput output = new()
             {
-                Id = result.Data.Id.ToString(),
-                Bytes = result.Data.Bytes,
-                ContentType = result.Data.ContentType,
-                DisplayName = result.Data.DisplayName,
-                UploadedTo = result.Data.UploadedTo
+                Id = entity.Id.ToString(),
+                Bytes = entity.Bytes,
+                ContentType = entity.ContentType,
+                DisplayName = entity.DisplayName,
+                UploadedTo = entity.UploadedTo
                     .Select(u => new FileUploadDestinationOutputEntry(u))
-                    .ToList()
+                    .ToList(),
+                ScanInfo = new()
+                {
+                    WidgetUrl = entity.ScanInfo?.WidgetUrl,
+                    Destination = entity.ScanInfo?.Destination.GetDescription()
+                }
             };
-            
+
             return new OkObjectResult(output);
         }
     }

@@ -5,5 +5,7 @@ namespace CloudDataProtection.Functions.BackupDemo.Triggers.Dto.Input
     public class FileUploadInput
     {
         public FileDestination[] Destinations { get; set; }
+        
+        public bool RunScan { get; set; }
     }
 }
