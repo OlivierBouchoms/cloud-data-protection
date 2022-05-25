@@ -8,7 +8,7 @@ import {startLoading, stopLoading} from "common/progress/helper";
 import {AccountService} from "services/accountService";
 import {useHistory} from "react-router-dom";
 import {useSnackbar} from "notistack";
-import snackbarOptions from "common/snackbar/options";
+import SnackbarOptions from "common/snackbar/options";
 import ChangeEmail from "./modal/changeEmail";
 import ChangeEmailInput from "services/input/account/changeEmailInput";
 import {useSelector} from "react-redux";
@@ -53,7 +53,7 @@ const AccountSettings = () => {
     }
 
     const onDeleteAccountSuccess = () => {
-        enqueueSnackbar('Your account has been deleted. We hope to see you again in the future.', snackbarOptions);
+        enqueueSnackbar('Your account has been deleted. We hope to see you again in the future.', SnackbarOptions.info);
         history.push('/');
     }
 
@@ -82,7 +82,7 @@ const AccountSettings = () => {
     }
 
     const onChangeEmailSuccess = (email: string) => {
-        enqueueSnackbar(`A confirmation link has been sent to ${email}.`, snackbarOptions)
+        enqueueSnackbar(`A confirmation link has been sent to ${email}.`, SnackbarOptions.success)
     }
 
     const onChangeEmailComplete = () => {
@@ -112,7 +112,7 @@ const AccountSettings = () => {
 
     const onChangePasswordSuccess = () => {
         setChangePasswordVisible(false);
-        enqueueSnackbar('Your password has been updated.', snackbarOptions)
+        enqueueSnackbar('Your password has been updated.', SnackbarOptions.success)
     }
 
     const onChangePasswordComplete = () => {
@@ -120,8 +120,8 @@ const AccountSettings = () => {
         stopLoading();
     }
 
-    const onError = (e: any) => {
-        enqueueSnackbar(e, snackbarOptions);
+    const onError = (e: string) => {
+        enqueueSnackbar(e, SnackbarOptions.error);
     }
 
     const accountService = new AccountService();

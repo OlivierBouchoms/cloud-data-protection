@@ -3,7 +3,7 @@ import {AuthService} from "services/authService";
 import {Button, Input, Typography} from "@material-ui/core";
 import {useSnackbar} from 'notistack';
 import {http} from "common/http";
-import snackbarOptions from "common/snackbar/options";
+import SnackbarOptions from "common/snackbar/options";
 import { useHistory } from "react-router-dom";
 import "./register.css";
 import {CancelTokenSource} from "axios";
@@ -51,17 +51,13 @@ const Register = () => {
     const onSuccess = () => {
         setEmail('');
 
-        enqueueSnackbar('Your account has been created. You can now log in using the specified credentials', snackbarOptions);
+        enqueueSnackbar('Your account has been created. You can now log in using the specified credentials', SnackbarOptions.success);
 
         history.push("/login");
     }
 
-    const onError = (e: any) => {
-        if (!(e instanceof String)) {
-            e = 'An unknown error has occurred.';
-        }
-
-        enqueueSnackbar(e, snackbarOptions);
+    const onError = (e: string) => {
+        enqueueSnackbar(e, SnackbarOptions.error);
     }
 
     const onFinish = () => {
