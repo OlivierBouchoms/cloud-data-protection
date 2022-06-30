@@ -1,6 +1,6 @@
 import {
     Button,
-    Checkbox, CircularProgress, Dialog, FormControlLabel,
+    Checkbox, FormControlLabel,
     FormGroup, FormLabel,
     Input,
     List,
@@ -9,7 +9,8 @@ import {
     ListItemText,
     Typography
 } from "@material-ui/core";
-import React, {FormEvent, useEffect, useRef, useState} from "react";
+import Scan from "components/scan";
+import React, {FormEvent, useEffect, useState} from "react";
 import {formatBytes} from "common/formatting/fileFormat";
 import {CancelTokenSource} from "axios";
 import {http} from "common/http";
@@ -31,7 +32,6 @@ const Demo = () => {
     const [selectedFile, setSelectedFile] = useState<File>();
     const [uploadedFile, setUploadedFile] = useState<FileUploadResult>();
 
-    const [scanLoading, setScanLoading] = useState<boolean>(false);
     const [scanModalOpen, setScanModalOpen] = useState<boolean>(false);
 
     const [fileUploadInput, setFileUploadInput] = useState<FileUploadInput>({
@@ -47,8 +47,6 @@ const Demo = () => {
     const [initialized, setInitialized] = useState<boolean>(false);
 
     const {enqueueSnackbar} = useSnackbar();
-
-    const scanReportRef = useRef(null);
 
     const demoService = new DemoService();
 
@@ -226,36 +224,8 @@ const Demo = () => {
         enqueueSnackbar(e, snackbarOptions);
     }
 
-    const onViewScanClick = async (e: any) => {
-        const widgetUrl = uploadedFile?.scanInfo?.widgetUrl;
-
-        if (!widgetUrl) {
-            return;
-        }
-
+    const onViewScanClick = () => {
         setScanModalOpen(true);
-        setScanLoading(true);
-
-        const content = await fetch(widgetUrl)
-            .then(res => res.text());
-
-        const iframe = scanReportRef.current! as HTMLIFrameElement;
-
-        const document = iframe.contentWindow!.document;
-
-        document.open();
-        document.write(content);
-        document.close();
-
-        iframe.contentWindow!.onload = () => {
-            const closeButton = document.querySelector('nav .vt-close-widget') as HTMLButtonElement;
-
-            if (closeButton) {
-                closeButton.onclick = () => setScanModalOpen(false);
-            }
-
-            setScanLoading(false);
-        };
     }
 
     return (
@@ -397,17 +367,9 @@ const Demo = () => {
                     </Button>
                 </div>
             </div>
-            <Dialog open={scanModalOpen} onClose={_ => setScanModalOpen(false)} maxWidth='xl' className='dialog--scan-info'>
-                <>
-                    {scanLoading &&
-                        <div className='dialog__content dialog__content--scan-info dialog__content--scan-loader'>
-                            <CircularProgress />
-                        </div>
-                    }
-                    <iframe ref={scanReportRef} className='dialog__content dialog__content--scan-info' src='about:blank'
-                            title='Scan results' style={{display: scanLoading ? 'none' : 'unset'}}/>
-                </>
-            </Dialog>
+            {uploadedFile &&
+                <Scan open={scanModalOpen} onClose={() => setScanModalOpen(false)} scanInfo={uploadedFile!.scanInfo} />
+            }
         </div>
     )
 

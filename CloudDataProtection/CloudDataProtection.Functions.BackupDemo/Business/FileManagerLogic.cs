@@ -72,8 +72,9 @@ namespace CloudDataProtection.Functions.BackupDemo.Business
                         getWidgetTask = _fileScanService.GetWidget(file);
                         getFileResult = await _fileScanService.GetFile(file);
 
-                        if (!getFileResult.FileExists)
+                        if (getFileResult == null)
                         {
+                            // Upload the file if it doesn't exist
                             MemoryStream scanCopy = new();
 
                             await inputStream.CopyToAndSeekAsync(scanCopy);
@@ -103,8 +104,17 @@ namespace CloudDataProtection.Functions.BackupDemo.Business
 
                             await encryptedStream.CopyToAndSeekAsync(copy);
 
+#if DEBUG
+                            Stopwatch stopwatch = Stopwatch.StartNew();
+#endif
+                            
                             Service.Result.UploadFileResult fileResult = await fileService.Upload(copy, fileName);
 
+#if DEBUG
+                            stopwatch.Stop();
+                            Console.WriteLine($"Uploading file to {destination.ToString()} took {stopwatch.ElapsedMilliseconds} ms");
+#endif
+                            
                             info.UploadCompletedAt = DateTime.Now;
                             info.UploadSuccess = fileResult.Success;
                             info.FileId = fileResult.Id;
@@ -134,13 +144,12 @@ namespace CloudDataProtection.Functions.BackupDemo.Business
 
                         file.ScanInfo = new()
                         {
-                            AnalysisId = getFileResult.FileExists ? reAnalyseFileTask.Result.AnalysisId : uploadFileTask.Result.AnalysisId,
-                            ResourceUrl = getFileResult.FileExists ? getFileResult.Url : uploadFileTask.Result.Url,
+                            AnalysisId = getFileResult == null ? uploadFileTask.Result.AnalysisId : reAnalyseFileTask.Result.AnalysisId,
+                            ResourceUrl = getFileResult == null ? uploadFileTask.Result.Url : getFileResult.Url,
                             WidgetUrl = getWidgetTask.Result.Url,
                             Destination = _fileScanService.Destination
                         };
                     }
-
 
                     if (file.IsUploaded)
                     {

@@ -62,13 +62,18 @@ namespace CloudDataProtection.Functions.BackupDemo.Triggers
                 DisplayName = entity.DisplayName,
                 UploadedTo = entity.UploadedTo
                     .Select(u => new FileUploadDestinationOutputEntry(u))
-                    .ToList(),
-                ScanInfo = new()
-                {
-                    WidgetUrl = entity.ScanInfo?.WidgetUrl,
-                    Destination = entity.ScanInfo?.Destination.GetDescription()
-                }
+                    .ToList()
             };
+
+            if (entity.ScanInfo != null)
+            {
+                output.ScanInfo = new ()
+                {
+                    Id = entity.Id,
+                    WidgetUrl = entity.ScanInfo.WidgetUrl,
+                    Destination = entity.ScanInfo.Destination.GetDescription()
+                };
+            }
 
             return new OkObjectResult(output);
         }

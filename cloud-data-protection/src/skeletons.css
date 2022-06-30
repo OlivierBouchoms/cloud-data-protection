@@ -12,6 +12,11 @@
     animation: skeleton-lines var(--skeleton-duration) infinite linear;
 }
 
+.skeleton::before {
+    content: '|';
+    color: transparent;
+}
+
 .skeleton--checkbox {
     height: 1.2rem;
     margin: 1rem 0;

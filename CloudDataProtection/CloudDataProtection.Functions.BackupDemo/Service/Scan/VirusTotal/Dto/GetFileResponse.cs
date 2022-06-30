@@ -68,12 +68,18 @@ namespace CloudDataProtection.Functions.BackupDemo.Service.Scan.VirusTotal.Dto
         [JsonProperty("tags")]
         public List<string> Tags { get; set; }
 
+        /// <summary>
+        /// Unix epoch value of the last analysis, in seconds
+        /// </summary>
         [JsonProperty("last_analysis_date")]
         public int LastAnalysisDate { get; set; }
 
         [JsonProperty("unique_sources")]
         public int UniqueSources { get; set; }
 
+        /// <summary>
+        /// Unix epoch value of the first submission, in seconds
+        /// </summary>
         [JsonProperty("first_submission_date")]
         public int FirstSubmissionDate { get; set; }
 

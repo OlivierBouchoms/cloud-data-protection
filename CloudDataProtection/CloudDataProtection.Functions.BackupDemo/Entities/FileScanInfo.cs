@@ -6,7 +6,12 @@ namespace CloudDataProtection.Functions.BackupDemo.Entities
     {
         public Guid Id { get; set; } = Guid.NewGuid();
 
+        /// <summary>
+        /// Id linking to the analysis of the file
+        /// </summary>
         public string AnalysisId { get; set; }
+        
+        public DateTime AnalysedAt { get; set; }
                 
         public string ResourceUrl { get; set; }
         

@@ -41,27 +41,6 @@
     margin-top: 1rem;
 }
 
-.dialog--scan-info {
-    border-radius: 5px;
-}
-
-.dialog__content--scan-info {
-    height: 32rem !important;
-    max-height: calc(100% - 8rem);
-
-    width: 72rem !important;
-
-    border: none;
-}
-
-.dialog__content--scan-loader {
-    display: flex;
-    align-items: center;
-    align-content: center;
-    justify-content: center;
-    justify-items: center;
-}
-
 @media all and (max-width: 768px) {
     .backup-demo .MuiButtonBase-root {
         width: 100%!important;
