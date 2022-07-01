@@ -72,8 +72,6 @@ const ResetPassword = (props: RouteComponentProps) => {
     }
 
     const onError = (e: any) => {
-        console.log(e);
-
         if (!(typeof e === 'string' || e instanceof String)) {
             e = 'An unknown error has occurred.';
         }

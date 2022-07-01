@@ -9,6 +9,7 @@ import {
     ListItemText,
     Typography
 } from "@material-ui/core";
+import Scan from "components/scan";
 import React, {FormEvent, useEffect, useState} from "react";
 import {formatBytes} from "common/formatting/fileFormat";
 import {CancelTokenSource} from "axios";
@@ -20,7 +21,7 @@ import snackbarOptions from "common/snackbar/options";
 import {FileDownloadResult} from "services/result/demo/fileDownloadResult";
 import {FileUploadResult} from "services/result/demo/fileUploadResult";
 import {FileInfoResult} from "services/result/demo/fileInfoResult";
-import {CloudOutlined, Crop, Description, Info} from "@material-ui/icons";
+import {CloudOutlined, Crop, Description, Info, Security} from "@material-ui/icons";
 import {FileSourceResult, FileDestinationResultEntry} from "services/result/demo/fileSourceResult";
 import FileDestination from "entities/fileDestination";
 import FileUploadInput from "services/input/demo/fileUploadInput";
@@ -31,7 +32,12 @@ const Demo = () => {
     const [selectedFile, setSelectedFile] = useState<File>();
     const [uploadedFile, setUploadedFile] = useState<FileUploadResult>();
 
-    const [fileUploadInput, setFileUploadInput] = useState<FileUploadInput>({ destinations: [] });
+    const [scanModalOpen, setScanModalOpen] = useState<boolean>(false);
+
+    const [fileUploadInput, setFileUploadInput] = useState<FileUploadInput>({
+        destinations: [],
+        runScan: true
+    });
 
     const [sources, setDestinations] = useState<FileSourceResult>();
 
@@ -40,7 +46,7 @@ const Demo = () => {
 
     const [initialized, setInitialized] = useState<boolean>(false);
 
-    const { enqueueSnackbar } = useSnackbar();
+    const {enqueueSnackbar} = useSnackbar();
 
     const demoService = new DemoService();
 
@@ -85,7 +91,13 @@ const Demo = () => {
             destinations = destinations.filter(d => d !== fileSource);
         }
 
-        setFileUploadInput({destinations: destinations});
+        setFileUploadInput({...fileUploadInput, destinations });
+    }
+
+    const onScanFileChange = (e: any) => {
+        const runScan = !fileUploadInput.runScan;
+
+        setFileUploadInput({...fileUploadInput, runScan });
     }
 
     const isDestinationChecked = (entry: FileDestinationResultEntry) => {
@@ -212,6 +224,10 @@ const Demo = () => {
         enqueueSnackbar(e, snackbarOptions);
     }
 
+    const onViewScanClick = () => {
+        setScanModalOpen(true);
+    }
+
     return (
         <div className='backup-demo'>
             <Typography variant='h1'>Backup demo</Typography>
@@ -223,12 +239,13 @@ const Demo = () => {
                 <form onSubmit={(e) => onSubmit(e)}>
                     <div>
                         <FormLabel component='legend'>File</FormLabel>
-                        <Button className='backup-demo__upload__form__select-file' variant='contained' component='label'>
+                        <Button className='backup-demo__upload__form__select-file' variant='contained'
+                                component='label'>
                             {selectedFile ?
                                 <span>{selectedFile.name} ({formatBytes(selectedFile.size)})</span> :
                                 <span>Select a file</span>
                             }
-                            <input type="file" hidden onChange={(e) => onFileSelect(e)} />
+                            <input type="file" hidden onChange={(e) => onFileSelect(e)}/>
                         </Button>
                     </div>
 
@@ -236,7 +253,8 @@ const Demo = () => {
                         <FormLabel component='legend'>File destination</FormLabel>
                         {sources && sources.sources.length ? sources.sources.map((s) =>
                             <FormControlLabel
-                                control={<Checkbox checked={isDestinationChecked(s)} name={s.fileDestination.toString()} />}
+                                control={<Checkbox checked={isDestinationChecked(s)}
+                                                   name={s.fileDestination.toString()}/>}
                                 onChange={onDestinationChange}
                                 label={s.description}
                                 key={s.fileDestination.toString()}
@@ -254,11 +272,31 @@ const Demo = () => {
                         }
                     </FormGroup>
 
+                    <FormGroup className='backup-demo__scan'>
+                        <FormLabel component='legend'>Security scan</FormLabel>
+                        <FormControlLabel
+                            control={<Checkbox checked={fileUploadInput.runScan} name='RunScan'/>}
+                            onChange={onScanFileChange}
+                            label={<>
+                                <span>Run security scan</span>
+                                {uploadedFile?.scanInfo?.destination &&
+                                    <Button type='button' className='backup-demo__scan__view-results'
+                                            color='primary' variant='contained' onClick={onViewScanClick} startIcon={<Security />}>
+                                        View results
+                                    </Button>
+                                }
+                            </>}
+                            key='RunScan'
+                        />
+
+                    </FormGroup>
+
                     {uploadedFile && uploadedFile.success &&
                         <div className='backup-demo__uploaded-file'>
-                            Your file has been uploaded to {uploadedTo()}. You can access it later by saving the following code (click to copy): <code className='backup-demo__uploaded-file__id' onClick={(e) => copyToClipboard(e)}>
+                            Your file has been uploaded to {uploadedTo()}. You can access it later by saving the following code (click to copy):{' '}
+                            <code className='backup-demo__uploaded-file__id' onClick={(e) => copyToClipboard(e)}>
                                 {uploadedFile.id}
-                            </code>.
+                            </code>.{' '}
                             {uploadedFile.hasErrors &&
                                 <p>An error has occurred while uploading the file to {uploadedToError()}.</p>
                             }
@@ -269,7 +307,8 @@ const Demo = () => {
                     }
 
                     <div className='backup-demo__upload__btn-container'>
-                        <Button className='backup-demo__form__submit' type='submit' color='primary' variant='contained' disabled={!canSubmit()}>
+                        <Button className='backup-demo__form__submit' type='submit' color='primary' variant='contained'
+                                disabled={!canSubmit()}>
                             Upload file
                         </Button>
                     </div>
@@ -280,7 +319,8 @@ const Demo = () => {
                 <p>
                     Retrieve a file by entering a code in the text field below.
                 </p>
-                <Input className='backup-demo__retrieve__input' type="text" placeholder="Enter code" value={fileId} onChange={(e) => setFileId(e.target.value)}/>
+                <Input className='backup-demo__retrieve__input' type="text" placeholder="Enter code" value={fileId}
+                       onChange={(e) => setFileId(e.target.value)}/>
                 {fileInfo &&
                     <div className='backup-demo__retrieve__file-info'>
                         <Typography variant='h5'>File info</Typography>
@@ -321,11 +361,15 @@ const Demo = () => {
                     </div>
                 }
                 <div className='backup-demo__retrieve__btn-container'>
-                    <Button className='backup-demo__retrieve' color='primary' variant='contained' disabled={fileInfo === undefined} onClick={() => download()}>
+                    <Button className='backup-demo__retrieve' color='primary' variant='contained'
+                            disabled={fileInfo === undefined} onClick={() => download()}>
                         Download file
                     </Button>
                 </div>
             </div>
+            {uploadedFile &&
+                <Scan open={scanModalOpen} onClose={() => setScanModalOpen(false)} scanInfo={uploadedFile!.scanInfo} />
+            }
         </div>
     )
 

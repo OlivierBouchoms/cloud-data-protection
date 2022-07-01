@@ -1,0 +1,19 @@
+.dialog--scan-info {
+    border-radius: 5px;
+}
+
+.dialog__content--scan {
+    height: min(32rem, calc(100vh - 4rem));
+    width: 100% !important;
+}
+
+.scan-info__report {
+    display: block;
+}
+
+.scan-info__report iframe {
+    border: none;
+
+    display: block;
+    width: 100%;
+}

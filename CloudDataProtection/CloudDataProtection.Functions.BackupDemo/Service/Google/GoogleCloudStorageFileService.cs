@@ -68,21 +68,15 @@ namespace CloudDataProtection.Functions.BackupDemo.Service.Google
             
             StorageClient client = await StorageClient.CreateAsync(credential);
 
-            try
-            {
-                Bucket bucket = await client.GetBucketAsync(BucketName);
+            Bucket bucket = await client.GetBucketAsync(BucketName);
 
-                if (bucket == null)
-                {
-                    throw new GoogleApiException("storage", "The specified bucket does not exist");
-                }
-            }
-            catch (GoogleApiException e)
+            if (bucket == null)
             {
                 Bucket newBucket = new()
                 {
                     Name = BucketName,
-                    StorageClass = StorageClasses.Standard
+                    StorageClass = StorageClasses.Standard,
+                    LocationType = "region"
                 };
 
                 await client.CreateBucketAsync(ProjectId, newBucket);

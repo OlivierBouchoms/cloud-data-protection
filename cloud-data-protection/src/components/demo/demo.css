@@ -51,6 +51,14 @@
     margin-top: 1rem;
 }
 
+.backup-demo__scan {
+    margin-top: 1rem;
+}
+
+.backup-demo__scan__view-results {
+    margin-left: 1rem!important;
+}
+
 .backup-demo__upload__form__select-file {
     margin-top: .5rem!important;
 }
